@@ -10,8 +10,10 @@ type Scene = {
 export default function JourneyScenes<T extends Scene>({
   trips,
   onOpen,
+  motionEnabled,
 }: {
   trips: T[];
+  motionEnabled: boolean;
   onOpen: (trip: T) => void;
 }) {
   const root = useRef<HTMLElement>(null);
@@ -23,12 +25,12 @@ export default function JourneyScenes<T extends Scene>({
   useEffect(() => {
     const el = root.current;
     if (!el || !window.matchMedia) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     const photos = [...el.querySelectorAll<HTMLElement>(".lt-scene-photo")];
     let frame = 0;
     const paint = () => {
       frame = 0;
-      if (reduced.matches) return;
+      if (!motionEnabled) return;
       const stage = el.firstElementChild as HTMLElement;
       const offset = parseFloat(getComputedStyle(stage).top) || 0;
       const span = el.offsetHeight - stage.offsetHeight;
@@ -60,17 +62,16 @@ export default function JourneyScenes<T extends Scene>({
     paint();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
-    reduced.addEventListener("change", schedule);
+
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
-      reduced.removeEventListener("change", schedule);
     };
-  }, [count, sceneKey]);
+  }, [count, sceneKey, motionEnabled]);
   if (!count) return null;
   const choose = (index: number) => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+    if (!motionEnabled) {
       setActive(index);
       return;
     }
