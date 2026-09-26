@@ -28,7 +28,8 @@ import "./travelMotion.css";
 import "./platform.css";
 import { useTravelMotion } from "./useTravelMotion";
 import JourneyScenes from "./JourneyScenes";
-import AlpineAscent from "./AlpineAscent";
+import TravelHero from "./TravelHero";
+import { useMotionPreference } from "./useMotionPreference";
 
 type Person = {
   id: string;
@@ -249,6 +250,7 @@ function Card({
 }
 
 export default function Platform() {
+  const motion = useMotionPreference();
   const [user, setUser] = useState<Person | null>(null),
     [ready, setReady] = useState(false),
     [signup, setSignup] = useState(false);
@@ -442,6 +444,7 @@ export default function Platform() {
   useTravelMotion(
     motionRoot,
     `${Boolean(user)}-${page}-${trips.map((trip) => trip.id).join(",")}-${owned.length}-${bookings.length}-${revision}`,
+    motion.enabled,
   );
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -533,9 +536,7 @@ export default function Platform() {
               Stories you’ll carry home.
             </p>
           </div>
-          <span className="lt-coordinate">
-            THE GREAT OUTSIDE / LET’S TRAVEL
-          </span>
+          <span className="lt-coordinate">ULUWATU, BALI / LET’S TRAVEL</span>
         </div>
         <main className="lt-auth-form">
           <span className="lt-eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
@@ -617,7 +618,10 @@ export default function Platform() {
     );
   return (
     <ErrorContext.Provider value={error}>
-      <div className="lt-app" ref={motionRoot}>
+      <div
+        className={`lt-app ${motion.enabled ? "lt-motion-on" : "lt-motion-off"}`}
+        ref={motionRoot}
+      >
         <div className="lt-scroll-progress" aria-hidden="true" />
         <a className="lt-skip" href="#content">
           Skip to content
@@ -694,27 +698,29 @@ export default function Platform() {
         <main id="content" key={page}>
           {page === "discover" && (
             <>
-              <AlpineAscent />
-              <div className="lt-marquee" aria-hidden="true">
-                <div>
-                  {Array.from({ length: 4 }, (_, i) => (
-                    <span key={i}>
-                      New perspectives <b>✳</b> Good company <b>✳</b>{" "}
-                      Unforgettable places <b>✳</b>{" "}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <TravelHero
+                motion={motion}
+                onExplore={(value) => {
+                  setSearch(value);
+                  setQuery(value);
+                  const collection = document.getElementById("collection");
+                  collection?.scrollIntoView({
+                    behavior: motion.enabled ? "smooth" : "instant",
+                    block: "start",
+                  });
+                  collection
+                    ?.querySelector<HTMLInputElement>("input")
+                    ?.focus({ preventScroll: true });
+                }}
+              />
               <section id="collection" className="lt-section lt-reveal">
                 <div className="lt-section-heading">
                   <div>
-                    <span className="lt-eyebrow">
-                      THE COLLECTION / {String(trips.length).padStart(2, "0")}
-                    </span>
+                    <span className="lt-eyebrow">FIND YOUR NEXT JOURNEY</span>
                     <h2>
-                      Where will you
+                      A change of scene.
                       <br />
-                      <em>find yourself?</em>
+                      <em>At your own pace.</em>
                     </h2>
                   </div>
                   <div className="lt-search-wrap">
@@ -729,7 +735,7 @@ export default function Platform() {
                       <Search size={18} />
                       <input
                         aria-label="Search journeys"
-                        placeholder="A place, a feeling, an adventure…"
+                        placeholder="Search a destination or activity"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         list="journey-suggestions"
@@ -749,6 +755,7 @@ export default function Platform() {
                 <div className="lt-filter-row">
                   <button
                     className={!search ? "active" : ""}
+                    aria-pressed={!search}
                     onClick={() => {
                       setSearch("");
                       setQuery("");
@@ -759,6 +766,7 @@ export default function Platform() {
                   {["Hiking", "Culture", "Beach", "Japan"].map((q) => (
                     <button
                       className={search === q ? "active" : ""}
+                      aria-pressed={search === q}
                       key={q}
                       onClick={() => {
                         setSearch(q);
@@ -790,7 +798,11 @@ export default function Platform() {
                   </div>
                 )}
               </section>
-              <JourneyScenes trips={trips} onOpen={open} />
+              <JourneyScenes
+                trips={trips}
+                onOpen={open}
+                motionEnabled={motion.enabled}
+              />
               <section className="lt-manifesto lt-reveal">
                 <span className="lt-eyebrow">THE WAY WE TRAVEL</span>
                 <h2>

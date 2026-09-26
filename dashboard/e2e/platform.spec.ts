@@ -18,12 +18,12 @@ for (const role of ["traveler", "manager"]) {
       .fill(demo[role].password);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(
-      page.getByRole("heading", { name: "GO BEYOND." }),
+      page.getByRole("heading", { name: "Find your kind of elsewhere." }),
     ).toBeVisible();
     await expect(page.locator(".lt-card").first()).toBeVisible();
     await expect(page.getByText(/NaN/)).toHaveCount(0);
     const heroAnimation = await page
-      .locator(".lt-marquee > div")
+      .locator(".lt-voyage-window img")
       .evaluate((e) => getComputedStyle(e).animationName);
     expect(heroAnimation).not.toBe("none");
     await page.screenshot({

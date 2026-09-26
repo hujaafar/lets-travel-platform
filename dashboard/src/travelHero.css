@@ -1,0 +1,390 @@
+/* A photographic window opens into a destination. Native scroll stays in control. */
+.lt-voyage {
+  --journey: 0;
+  height: 175svh;
+  position: relative;
+  background: #10241f;
+}
+.lt-voyage-stage {
+  position: sticky;
+  top: 78px;
+  height: calc(100svh - 78px);
+  min-height: 660px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lt-voyage-window {
+  position: absolute;
+  inset: 4% 3% 9% 42%;
+  overflow: hidden;
+  border-radius: 130px 8px 8px 8px;
+  transform-origin: right center;
+  clip-path: inset(0);
+  left: calc(42% - var(--journey) * 42%);
+  right: calc(3% - var(--journey) * 3%);
+  top: calc(4% - var(--journey) * 4%);
+  bottom: calc(9% - var(--journey) * 9%);
+  border-top-left-radius: calc(130px - var(--journey) * 130px);
+}
+.lt-voyage-window img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 50% 58%;
+  animation: lt-coastal-air 22s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.lt-voyage.in-view:not(.is-hidden) .lt-voyage-window img {
+  animation-play-state: running;
+}
+.lt-voyage-location {
+  position: absolute;
+  right: 28px;
+  top: 25px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid #e6e8d95c;
+  border-radius: 30px;
+  background: #10241fe6;
+  font-size: 12px;
+  color: #f8f2e6;
+}
+.lt-voyage-shade {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #10241f 10%,
+    #10241fee 29%,
+    #10241f45 62%,
+    transparent 85%
+  );
+  pointer-events: none;
+}
+.lt-voyage-copy {
+  position: relative;
+  z-index: 3;
+  padding: clamp(65px, 9svh, 110px) 0 100px;
+  margin-left: 6.7%;
+  width: 55%;
+  transform: translateY(calc(var(--journey) * -20px));
+}
+.lt-voyage-copy .lt-eyebrow {
+  color: #d6daca;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+.lt-app .lt-voyage h1 {
+  font-size: clamp(66px, 7.5vw, 112px);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+  font-weight: 400;
+  text-transform: none;
+  margin: 26px 0;
+  color: #f5f1e6;
+}
+.lt-app .lt-voyage h1 em {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.065em;
+  color: #e9be99;
+}
+.lt-voyage-description {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #e0e4d9;
+}
+.lt-app .lt-voyage-action {
+  margin-top: 30px;
+  font-size: 14px !important;
+  min-height: 54px;
+  border-radius: 5px;
+  gap: 36px;
+}
+.lt-voyage-note {
+  display: block;
+  color: #bdcabe;
+  font-size: 12px;
+  margin-top: 14px;
+}
+.lt-voyage-route {
+  position: absolute;
+  width: 40%;
+  right: 8%;
+  bottom: 11%;
+  color: #f4ead6;
+  z-index: 2;
+  pointer-events: none;
+  transform: translateY(calc(var(--journey) * -30px));
+}
+.lt-voyage-trace {
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(0.9 - var(--journey) * 0.9);
+}
+.lt-postcard {
+  position: absolute;
+  z-index: 3;
+  bottom: 10%;
+  right: 7%;
+  width: clamp(165px, 17vw, 260px);
+  padding: 9px;
+  background: #f4efdf;
+  border: 0;
+  box-shadow: 0 18px 45px #05181355;
+  transform: translate(
+      calc(var(--journey) * 25px),
+      calc(var(--journey) * -65px)
+    )
+    rotate(calc(7deg - var(--journey) * 10deg));
+  transition: box-shadow 0.2s;
+  text-align: left;
+}
+.lt-postcard:hover {
+  box-shadow: 0 24px 55px #05181399;
+}
+.lt-postcard img {
+  display: block;
+  width: 100%;
+  height: clamp(155px, 18vw, 250px);
+  object-fit: cover;
+}
+.lt-app .lt-postcard > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 5px 5px;
+  color: #20362b;
+  font-size: 10px;
+}
+.lt-postcard strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 3px;
+}
+.lt-voyage-controls {
+  position: absolute;
+  z-index: 4;
+  right: 3%;
+  bottom: 24px;
+  display: flex;
+  gap: 8px;
+}
+.lt-app .lt-voyage-controls button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #d8e0d55c;
+  border-radius: 30px;
+  color: #f4f1e6;
+  background: #10241feb;
+  font-size: 11px;
+}
+.lt-travel-interests {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 4;
+  min-height: 105px;
+  display: grid;
+  grid-template-columns: 1fr repeat(3, 1fr);
+  background: #efeade;
+  color: #20352e;
+  padding: 22px 6.7%;
+  gap: 24px;
+  align-items: center;
+}
+.lt-travel-interests > span {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.lt-travel-interests strong {
+  font-size: 16px;
+  font-weight: 500;
+}
+.lt-app .lt-travel-interests button {
+  border: 0;
+  border-left: 1px solid #c4c8b9;
+  background: transparent;
+  color: #20352e;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0 16px 25px;
+  font-size: 14px;
+  text-align: left;
+}
+.lt-travel-interests button svg:last-child {
+  margin-left: auto;
+}
+.lt-travel-interests button:hover span {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.lt-app #collection {
+  margin-top: 105px;
+  scroll-margin-top: 95px;
+}
+@keyframes lt-coastal-air {
+  from {
+    transform: scale(1.03) translateY(0);
+  }
+  to {
+    transform: scale(1.1) translateY(-1.5%);
+  }
+}
+.lt-motion-off .lt-voyage {
+  height: auto;
+}
+.lt-motion-off .lt-voyage-stage {
+  position: relative;
+  top: 0;
+}
+.lt-motion-off .lt-voyage-window img {
+  animation: none !important;
+}
+.lt-motion-off .lt-voyage-trace {
+  stroke-dashoffset: 0;
+}
+@media (max-width: 1050px) and (min-width: 761px) {
+  .lt-app .lt-voyage h1 {
+    font-size: 79px;
+  }
+  .lt-voyage-copy {
+    margin-left: 5%;
+    width: 65%;
+  }
+  .lt-postcard {
+    right: 5%;
+    bottom: 14%;
+  }
+}
+@media (max-width: 760px) {
+  .lt-voyage {
+    height: auto;
+    padding-bottom: 0;
+  }
+  .lt-voyage-stage {
+    position: relative;
+    top: 0;
+    height: 880px;
+    min-height: 0;
+  }
+  .lt-voyage-copy {
+    margin-left: 7%;
+    padding: 40px 0 0;
+    width: 89%;
+    transform: none;
+  }
+  .lt-voyage-copy .lt-eyebrow {
+    font-size: 10px;
+  }
+  .lt-app .lt-voyage h1 {
+    font-size: clamp(56px, 13vw, 82px);
+    line-height: 1;
+    margin: 20px 0;
+  }
+  .lt-app .lt-voyage h1 br:nth-of-type(2) {
+    display: none;
+  }
+  .lt-app .lt-voyage h1 em::before {
+    content: " ";
+  }
+  .lt-voyage-description {
+    font-size: 14px;
+  }
+  .lt-app .lt-voyage-action {
+    margin-top: 23px;
+    min-height: 50px;
+  }
+  .lt-voyage-note {
+    font-size: 11px;
+  }
+  .lt-voyage-window {
+    inset: 445px 5% 45px 5%;
+    border-radius: 70px 5px 5px 5px;
+    transform: translateY(calc(var(--journey) * -24px));
+  }
+  .lt-voyage-window img {
+    object-position: 50% 70%;
+  }
+  .lt-voyage-location {
+    right: 16px;
+    top: 16px;
+    font-size: 10px;
+  }
+  .lt-voyage-shade {
+    display: none;
+  }
+  .lt-postcard {
+    width: 140px;
+    bottom: 71px;
+    right: 9%;
+    padding: 7px;
+    transform: translateY(calc(var(--journey) * -45px))
+      rotate(calc(7deg - var(--journey) * 8deg));
+  }
+  .lt-postcard img {
+    height: 150px;
+  }
+  .lt-postcard strong {
+    font-size: 11px;
+  }
+  .lt-app .lt-postcard > span {
+    padding: 9px 2px 2px;
+    font-size: 9px;
+  }
+  .lt-voyage-route {
+    width: 70%;
+    right: 12%;
+    bottom: 115px;
+  }
+  .lt-voyage-controls {
+    right: 5%;
+    bottom: 5px;
+  }
+  .lt-travel-interests {
+    position: relative;
+    top: auto;
+    padding: 25px 7%;
+    gap: 5px;
+    grid-template-columns: 1fr;
+  }
+  .lt-travel-interests > span {
+    padding: 0 0 14px;
+    font-size: 14px;
+  }
+  .lt-travel-interests > span br {
+    display: none;
+  }
+  .lt-travel-interests > span strong::before {
+    content: " ";
+  }
+  .lt-app .lt-travel-interests button {
+    border-left: 0;
+    border-top: 1px solid #c4c8b9;
+    padding: 15px 0;
+    min-height: 57px;
+  }
+  .lt-app #collection {
+    margin-top: 0;
+    scroll-margin-top: 125px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lt-motion-on .lt-voyage-window img {
+    animation: lt-coastal-air 22s ease-in-out infinite alternate !important;
+    animation-play-state: paused !important;
+  }
+  .lt-motion-on .lt-voyage.in-view:not(.is-hidden) .lt-voyage-window img {
+    animation-play-state: running !important;
+  }
+}

@@ -5,11 +5,11 @@ body {
   padding: 0;
 }
 .lt-app {
-  --ink: #edf2f5;
-  --paper: #0c1721;
+  --ink: #f4f0e6;
+  --paper: #10241f;
   --accent: #eab18a;
-  --line: #30404d;
-  --muted: #a9bac7;
+  --line: #344b40;
+  --muted: #b8c6ba;
   background: var(--paper);
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
@@ -161,7 +161,7 @@ body {
   border: 0;
   font-size: 12px;
   padding: 10px 0;
-  color: #b0beca;
+  color: #bdcbbf;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -197,7 +197,7 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #253846;
+  background: #2b4536;
   display: inline-grid;
   place-items: center;
   font-family: "DM Sans", sans-serif;
@@ -347,8 +347,8 @@ body {
   opacity: 0.8;
 }
 .lt-marquee {
-  background: #132330;
-  border-bottom: 1px solid #30404d;
+  background: #193128;
+  border-bottom: 1px solid #344b40;
   overflow: hidden;
   height: 54px;
   display: flex;
@@ -434,7 +434,7 @@ body {
 .lt-filter-row button {
   background: transparent;
   border: 1px solid var(--line);
-  color: #a9bac7;
+  color: #b8c6ba;
   border-radius: 30px;
   padding: 7px 17px;
   font-size: 11px;
@@ -443,8 +443,8 @@ body {
 .lt-filter-row button.active,
 .lt-filter-row button:hover {
   color: white;
-  background: #2c485a;
-  border-color: #2c485a;
+  background: #375345;
+  border-color: #375345;
 }
 .lt-filter-row > span {
   margin-left: auto;
@@ -545,7 +545,7 @@ body {
 }
 .lt-manifesto {
   position: relative;
-  background: #152b3b;
+  background: #203a30;
   color: #f2f0e5;
   padding: 80px 6.7% 90px;
   display: grid;
@@ -826,7 +826,7 @@ body {
   grid-template-columns: 1fr 1fr;
   padding: 55px 6.7% 22px;
   gap: 45px;
-  border-top: 1px solid #30404d;
+  border-top: 1px solid #344b40;
 }
 .lt-footer > div:nth-child(2) {
   justify-self: end;
@@ -844,7 +844,7 @@ body {
   align-items: center;
   width: 100%;
   border: 0;
-  border-bottom: 1px solid #30404d;
+  border-bottom: 1px solid #344b40;
   padding: 13px 0;
   background: transparent;
   color: var(--ink);
@@ -858,7 +858,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  border-top: 1px solid #30404d;
+  border-top: 1px solid #344b40;
   padding-top: 21px;
   color: #aebecb;
   font-size: 9px;
@@ -959,7 +959,7 @@ body {
 .lt-app label select,
 .lt-app label textarea {
   border: 1px solid #405464;
-  background: #142532;
+  background: #203a30;
   border-radius: 3px;
   padding: 11px 12px;
   width: 100%;
@@ -991,8 +991,8 @@ body {
   color: var(--muted);
 }
 .lt-modal {
-  background: #0c1721;
-  color: #edf2f5;
+  background: #10241f;
+  color: #f4f0e6;
   border: 0;
   border-radius: 5px;
   width: min(790px, calc(100vw - 32px));
@@ -1010,8 +1010,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 25px;
-  background: #0c1721;
-  border-bottom: 1px solid #30404d;
+  background: #10241f;
+  border-bottom: 1px solid #344b40;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -1033,7 +1033,7 @@ body {
 }
 .lt-modal-content > p {
   font-size: 14px;
-  color: #a9bac7;
+  color: #b8c6ba;
   margin: 15px 0;
 }
 .lt-detail-image {
@@ -1047,7 +1047,7 @@ body {
 .lt-itinerary article {
   display: flex;
   gap: 25px;
-  border-top: 1px solid #30404d;
+  border-top: 1px solid #344b40;
   padding: 25px 0;
 }
 .lt-itinerary article > span {
@@ -1077,7 +1077,7 @@ body {
 }
 .lt-app cite {
   font-size: 10px;
-  color: #a9bac7;
+  color: #b8c6ba;
   font-style: normal;
 }
 .lt-checkout {
@@ -1098,12 +1098,12 @@ body {
 }
 .lt-checkout span {
   font-size: 10px;
-  color: #a9bac7;
+  color: #b8c6ba;
 }
 .lt-checkout p {
   font-size: 12px;
   margin: 16px 0 20px;
-  color: #a9bac7;
+  color: #b8c6ba;
 }
 .lt-form-grid {
   display: grid;
@@ -1111,7 +1111,7 @@ body {
   gap: 0 20px;
 }
 .lt-app fieldset {
-  border: 1px solid #30404d;
+  border: 1px solid #344b40;
   margin: 23px 0;
   padding: 15px 20px;
 }
@@ -1124,7 +1124,7 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  border-bottom: 1px solid #30404d;
+  border-bottom: 1px solid #344b40;
   padding: 20px 0;
 }
 .lt-subscriber h3 {
@@ -1132,7 +1132,7 @@ body {
 }
 .lt-subscriber p {
   font-size: 11px;
-  color: #a9bac7;
+  color: #b8c6ba;
 }
 .lt-subscriber > div:last-child {
   margin-left: auto;
@@ -1470,7 +1470,7 @@ body {
   }
 }
 
-/* Alpine product tokens shared with the immersive opening. */
+/* Warm travel editorial language shared by every product surface. */
 .lt-app {
   color-scheme: dark;
 }
@@ -1482,13 +1482,13 @@ body {
 }
 .lt-app .lt-header {
   height: 78px;
-  background: #0c1721f5;
+  background: #10241ff5;
   border-color: #ffffff19;
   backdrop-filter: blur(16px);
 }
 .lt-app h1,
 .lt-app h2 {
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: 400;
   letter-spacing: -0.045em;
 }
@@ -1503,27 +1503,27 @@ body {
 .lt-mark {
   border-radius: 2px;
   background: transparent;
-  color: #edf2f5;
-  border: 1px solid #92a8b7;
+  color: #f4f0e6;
+  border: 1px solid #b1c2b6;
 }
 .lt-app .lt-button {
-  color: #112331 !important;
+  color: #20352e !important;
   background: #eab18a;
   border-color: #eab18a;
 }
 .lt-app .lt-button-light {
-  background: #edf2f5;
-  border-color: #edf2f5;
-  color: #112331 !important;
+  background: #f4f0e6;
+  border-color: #f4f0e6;
+  color: #20352e !important;
 }
 .lt-app .lt-button:hover {
   background: #f5c8a9;
 }
 .lt-app .lt-search input::placeholder {
-  color: #a9bac7;
+  color: #b8c6ba;
 }
 .lt-app .lt-search input {
-  color: #edf2f5;
+  color: #f4f0e6;
 }
 .lt-app .lt-filter-row button {
   transition:
@@ -1532,8 +1532,8 @@ body {
   border-radius: 2px;
 }
 .lt-app .lt-pill {
-  background: #122b3fe6;
-  border-color: #8da2b2;
+  background: #20382fe6;
+  border-color: #b1c2b6;
   border-radius: 2px;
 }
 .lt-app .lt-marquee {
@@ -1547,36 +1547,35 @@ body {
   font-size: 12px;
 }
 .lt-app .lt-card-image {
-  border-radius: 1px;
+  border-radius: 8px;
 }
 .lt-app .lt-card-image img {
-  filter: saturate(0.8);
+  filter: saturate(0.96);
 }
 .lt-app .lt-card-image::after {
-  background: #1a2e3d;
+  background: #253e32;
 }
 .lt-app .lt-section-heading h2 {
   font-size: clamp(36px, 4.4vw, 64px);
 }
 .lt-app .lt-card-arrow {
-  background: #edf2f5;
-  color: #152b3b;
+  background: #f4f0e6;
+  color: #203a30;
   border-radius: 2px;
 }
 .lt-app .lt-manifesto {
-  border-block: 1px solid #304858;
+  border-block: 1px solid #344b40;
 }
 .lt-app .lt-manifesto h2 {
   font-size: clamp(43px, 6vw, 82px);
 }
 .lt-app .lt-footer {
-  background: #0b151e;
+  background: #0c1d18;
 }
 .lt-app .lt-auth-image {
   background-image:
-    linear-gradient(0deg, #081726e8, transparent 85%),
-    linear-gradient(90deg, #0a1b32ae, transparent),
-    url("/images/ascent-poster.jpg");
+    linear-gradient(0deg, #10241fe8, transparent 85%),
+    linear-gradient(90deg, #10241f9e, transparent), url("/images/uluwatu.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -1595,11 +1594,11 @@ body {
   color: #b8e8cf;
 }
 .lt-app .lt-modal {
-  background: #0c1721;
-  color: #edf2f5;
+  background: #10241f;
+  color: #f4f0e6;
 }
 .lt-app .lt-modal > header button {
-  color: #edf2f5;
+  color: #f4f0e6;
 }
 .lt-app .lt-scroll-progress {
   background: #eab18a;
@@ -1607,20 +1606,20 @@ body {
 .lt-app .lt-scenes-stage {
   top: 91px;
   height: calc(100svh - 115px);
-  background: #142532;
+  background: #203a30;
 }
 .lt-app .lt-scenes-stage::after {
   background:
-    linear-gradient(90deg, #0b1d30dd, transparent 75%),
-    linear-gradient(0deg, #0b1d30e8, transparent 40%);
+    linear-gradient(90deg, #10241fdd, transparent 75%),
+    linear-gradient(0deg, #10241fe8, transparent 40%);
 }
 .lt-app .lt-scene-top a,
 .lt-app .lt-scene-tabs button {
-  background: #142c3eef;
+  background: #20392eef;
 }
 .lt-app .lt-scene-tabs button[aria-pressed="true"] {
-  color: #152b3b;
-  background: #edf2f5;
+  color: #203a30;
+  background: #f4f0e6;
 }
 .lt-app .lt-scene-copy > p {
   font-family: "DM Sans", sans-serif;
@@ -1649,5 +1648,165 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .lt-app .lt-scenes-stage {
     top: 0;
+  }
+}
+
+/* Comfortable controls and readable trip comparisons. */
+.lt-app .lt-header nav button,
+.lt-app .lt-header nav a {
+  font-size: 13px;
+}
+.lt-app .lt-search {
+  border: 1px solid #657d6d;
+  border-radius: 6px;
+  padding: 8px 10px 8px 15px;
+  background: #193128;
+}
+.lt-app .lt-search input {
+  font-size: 14px;
+}
+.lt-app .lt-search-wrap {
+  width: 380px;
+}
+.lt-app .lt-search-wrap p {
+  font-size: 12px;
+}
+.lt-app .lt-filter-row button {
+  font-size: 12px;
+  min-height: 42px;
+  border-radius: 24px;
+  padding: 8px 18px;
+}
+.lt-app .lt-filter-row > span {
+  font-size: 12px;
+}
+.lt-app .lt-card-meta {
+  font-size: 11px;
+  letter-spacing: 0.025em;
+}
+.lt-app .lt-card-bottom {
+  font-size: 12px;
+}
+.lt-app .lt-card-bottom small {
+  font-size: 11px;
+}
+.lt-app .lt-card-bottom strong {
+  font-size: 16px;
+}
+.lt-app .lt-pill {
+  font-size: 11px;
+  border-radius: 30px;
+}
+.lt-app .lt-card-arrow {
+  border-radius: 50%;
+}
+.lt-app .lt-button {
+  border-radius: 5px;
+}
+.lt-app .lt-scenes {
+  height: 185svh;
+}
+.lt-app .lt-scenes-stage {
+  border-radius: 12px;
+}
+.lt-app .lt-scene-copy h2 {
+  font-size: clamp(58px, 8vw, 112px);
+}
+.lt-app .lt-manifesto h2 {
+  font-size: clamp(42px, 5.3vw, 72px);
+}
+.lt-app .lt-manifesto-number {
+  opacity: 0.1;
+}
+.lt-app .lt-eyebrow {
+  font-size: 11px;
+}
+.lt-app .lt-footer-bottom {
+  font-size: 10px;
+}
+.lt-app .lt-skip {
+  color: #10241f;
+}
+.lt-app.lt-motion-off *,
+.lt-app.lt-motion-off *::before,
+.lt-app.lt-motion-off *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.lt-motion-off .lt-motion-item,
+.lt-motion-off .lt-manifesto-number {
+  translate: none;
+}
+.lt-motion-off .lt-manifesto h2 {
+  transform: none;
+}
+.lt-motion-off .lt-card-image::after {
+  transform: scaleY(0);
+}
+.lt-app.lt-motion-off .lt-scenes {
+  height: auto;
+}
+.lt-app.lt-motion-off .lt-scenes-stage {
+  position: relative;
+  top: 0;
+}
+.lt-motion-off .lt-scene-photo {
+  clip-path: none !important;
+  visibility: hidden;
+}
+.lt-motion-off .lt-scene-photo.is-active {
+  visibility: visible;
+}
+.lt-motion-off .lt-scene-photo img {
+  transform: none;
+}
+@media (max-width: 760px) {
+  .lt-app .lt-scenes {
+    height: 170svh;
+  }
+  .lt-app .lt-section-heading h2 {
+    font-size: 37px;
+  }
+  .lt-app .lt-manifesto h2 {
+    font-size: 43px;
+  }
+  .lt-app .lt-card-image {
+    border-radius: 7px;
+  }
+  .lt-app .lt-card-meta {
+    font-size: 11px;
+  }
+  .lt-app .lt-auth-image h1 {
+    font-size: 45px;
+  }
+  .lt-app .lt-scene-copy h2 {
+    font-size: clamp(49px, 12vw, 85px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lt-app.lt-motion-on .lt-scenes {
+    height: 185svh;
+  }
+  .lt-app.lt-motion-on .lt-scenes-stage {
+    position: sticky;
+    top: 91px;
+  }
+  .lt-motion-on .lt-scene-photo {
+    clip-path: inset(0 0 var(--cover, 100%) 0) !important;
+    visibility: visible;
+  }
+  .lt-motion-on .lt-scene-photo img {
+    transform: scale(var(--photo-scale, 1.12));
+  }
+  .lt-motion-on .lt-route-trace {
+    stroke-dashoffset: calc(1 - var(--scene-progress));
+  }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
+  .lt-app.lt-motion-on .lt-scenes {
+    height: 170svh;
+  }
+  .lt-app.lt-motion-on .lt-scenes-stage {
+    top: 118px;
   }
 }

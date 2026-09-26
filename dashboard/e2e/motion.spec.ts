@@ -20,7 +20,9 @@ test.beforeEach(async ({ page }) => {
 test("scroll changes the hero, photographs, route and destination with native navigation", async ({
   page,
 }, info) => {
-  await expect(page.getByRole("heading", { name: "GO BEYOND." })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Find your kind of elsewhere." }),
+  ).toBeVisible();
   const scene = page.locator(".lt-scenes");
   const positions = await scene.evaluate((e) => ({
     top:
@@ -93,7 +95,7 @@ test("reduced motion keeps destination selection functional without a pinned scr
   ).toBe("relative");
   expect(
     await page
-      .locator(".lt-ascent-copy")
+      .locator(".lt-voyage-copy")
       .evaluate((e) => getComputedStyle(e).animationName),
   ).toBe("none");
   await page.screenshot({
