@@ -100,7 +100,7 @@ public class IdentityController implements SessionVerifier {
     return ResponseEntity.ok()
         .header(
             HttpHeaders.SET_COOKIE,
-            ResponseCookie.from("tp_session", token)
+            ResponseCookie.from("lt_session", token)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
@@ -150,7 +150,7 @@ public class IdentityController implements SessionVerifier {
     return ResponseEntity.noContent()
         .header(
             HttpHeaders.SET_COOKIE,
-            ResponseCookie.from("tp_session", "")
+            ResponseCookie.from("lt_session", "")
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")

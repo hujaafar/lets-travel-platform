@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import subprocess
+import time
 from process_runtime import run_command
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,6 +103,11 @@ result = run(
     capture_output=True,
 )
 roles, owners, pending, travels = map(int, result.stdout.split())
+deadline = time.monotonic() + 30
+while pending and time.monotonic() < deadline:
+    time.sleep(1)
+    result = run(["docker", "compose", "exec", "-T", "postgres", "psql", "-At", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", "travelplan"], input=sql, capture_output=True)
+    roles, owners, pending, travels = map(int, result.stdout.split())
 assert (
     roles == owners == 3
 ), "Runtime roles must not own schemas or have administrative privileges"

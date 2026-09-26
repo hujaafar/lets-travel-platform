@@ -37,7 +37,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     return r.getCookies() == null
         ? ""
         : Arrays.stream(r.getCookies())
-            .filter(c -> c.getName().equals("tp_session"))
+            .filter(c -> c.getName().equals("lt_session"))
             .map(Cookie::getValue)
             .findFirst()
             .orElse("");

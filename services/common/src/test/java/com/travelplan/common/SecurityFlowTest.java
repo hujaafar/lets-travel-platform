@@ -18,7 +18,7 @@ class SecurityFlowTest {
     var request = new MockHttpServletRequest(method, path);
     request.addHeader("Origin", "https://localhost:8443");
     request.addHeader("X-CSRF-Token", "csrf");
-    request.setCookies(new Cookie("other", "ignored"), new Cookie("tp_session", "opaque"));
+    request.setCookies(new Cookie("other", "ignored"), new Cookie("lt_session", "opaque"));
     return request;
   }
 
