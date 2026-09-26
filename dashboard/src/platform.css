@@ -1578,6 +1578,8 @@ body {
     linear-gradient(90deg, #0a1b32ae, transparent),
     url("/images/ascent-poster.jpg");
   background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .lt-app .lt-status {
   background: #233949;
