@@ -8,4 +8,4 @@ Browse Discover, My journeys, Manager studio and My profile. Administrators can 
 
 A demo booking has `is_demo=true` and no checkout URL, provider ID, capture ID or refund ID. Reconciliation excludes it, processing returns without provider I/O, and cancellation is rejected with a clear read-only message. Status labels on these rows illustrate UI states; they are not evidence of a Stripe/PayPal charge or settlement. Provider sandbox integration remains separate.
 
-Motion starts enabled on each visit. Pause motion stops decorative animation and pinned scenes until the visitor enables it again or starts a new visit. It does not block search, account navigation or booking forms.
+Motion is always enabled while browsing, with no pause/enable toggle or stored preference. Decorative hero animation sleeps when its scene is offscreen or the tab is hidden, then resumes automatically. Search, account navigation and booking forms remain usable.

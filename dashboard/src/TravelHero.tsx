@@ -1,24 +1,11 @@
 import { useEffect, useRef } from "react";
-import {
-  ArrowUpRight,
-  MapPin,
-  Pause,
-  Play,
-  Waves,
-  Mountain,
-  Landmark,
-} from "lucide-react";
+import { ArrowUpRight, MapPin, Waves, Mountain, Landmark } from "lucide-react";
 import "./travelHero.css";
 import "./expressiveMotion.css";
 
 export default function TravelHero({
-  motion,
   onExplore,
 }: {
-  motion: {
-    enabled: boolean;
-    toggle: () => void;
-  };
   onExplore: (query: string) => void;
 }) {
   const root = useRef<HTMLElement>(null);
@@ -35,9 +22,10 @@ export default function TravelHero({
       const span = mobile
         ? el.offsetHeight
         : el.offsetHeight - stage.offsetHeight;
-      const progress = motion.enabled
-        ? Math.max(0, Math.min(1, (offset - top) / Math.max(1, span)))
-        : 0;
+      const progress = Math.max(
+        0,
+        Math.min(1, (offset - top) / Math.max(1, span)),
+      );
       el.style.setProperty("--journey", String(progress));
       el.dataset.progress = progress.toFixed(3);
     };
@@ -49,7 +37,7 @@ export default function TravelHero({
     });
     const visibility = () => el.classList.toggle("is-hidden", document.hidden);
     const pointer = (event: PointerEvent) => {
-      if (!motion.enabled || event.pointerType !== "mouse") return;
+      if (event.pointerType !== "mouse") return;
       const bounds = el.getBoundingClientRect();
       el.style.setProperty(
         "--pointer-x",
@@ -75,7 +63,7 @@ export default function TravelHero({
       window.removeEventListener("resize", schedule);
       document.removeEventListener("visibilitychange", visibility);
     };
-  }, [motion.enabled]);
+  }, []);
   return (
     <section
       className="lt-voyage"
@@ -181,12 +169,6 @@ export default function TravelHero({
             <ArrowUpRight size={20} />
           </span>
         </button>
-        <div className="lt-voyage-controls">
-          <button onClick={motion.toggle}>
-            {motion.enabled ? <Pause size={14} /> : <Play size={14} />}
-            {motion.enabled ? "Pause motion" : "Enable motion"}
-          </button>
-        </div>
       </div>
       <nav className="lt-travel-interests" aria-label="Explore by travel style">
         <span>
