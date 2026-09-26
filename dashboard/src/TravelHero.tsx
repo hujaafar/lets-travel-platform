@@ -9,6 +9,7 @@ import {
   Landmark,
 } from "lucide-react";
 import "./travelHero.css";
+import "./expressiveMotion.css";
 
 export default function TravelHero({
   motion,
@@ -17,8 +18,6 @@ export default function TravelHero({
   motion: {
     enabled: boolean;
     toggle: () => void;
-    useSystem: () => void;
-    overridden: boolean;
   };
   onExplore: (query: string) => void;
 }) {
@@ -49,6 +48,19 @@ export default function TravelHero({
       el.classList.toggle("in-view", entry.isIntersecting);
     });
     const visibility = () => el.classList.toggle("is-hidden", document.hidden);
+    const pointer = (event: PointerEvent) => {
+      if (!motion.enabled || event.pointerType !== "mouse") return;
+      const bounds = el.getBoundingClientRect();
+      el.style.setProperty(
+        "--pointer-x",
+        String(((event.clientX - bounds.left) / bounds.width) * 2 - 1),
+      );
+      el.style.setProperty(
+        "--pointer-y",
+        String((event.clientY / innerHeight) * 2 - 1),
+      );
+    };
+    el.addEventListener("pointermove", pointer, { passive: true });
     observer.observe(el);
     paint();
     visibility();
@@ -58,6 +70,7 @@ export default function TravelHero({
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      el.removeEventListener("pointermove", pointer);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       document.removeEventListener("visibilitychange", visibility);
@@ -119,7 +132,42 @@ export default function TravelHero({
             pathLength="1"
           />
           <circle cx="575" cy="25" r="5" fill="currentColor" />
+          <g className="lt-route-aircraft">
+            <path
+              d="M-13 -3L-2 -2 3 -12 7 -12 5 -2 13 0 5 2 7 12 3 12 -2 2 -13 3 -10 0Z"
+              fill="currentColor"
+            />
+          </g>
         </svg>
+        <button
+          className="lt-postcard-satellite satellite-greece"
+          onClick={() => onExplore("Greece")}
+          aria-label="Discover journeys in Greece"
+        >
+          <img
+            src="/images/greece.jpg"
+            alt="Blue domes overlooking the Aegean"
+          />
+          <span>
+            Salt air &amp; slow days
+            <strong>
+              Greece <ArrowUpRight size={15} />
+            </strong>
+          </span>
+        </button>
+        <button
+          className="lt-postcard-satellite satellite-japan"
+          onClick={() => onExplore("Japan")}
+          aria-label="Discover journeys in Japan"
+        >
+          <img src="/images/japan.jpg" alt="An evening walk through Kyoto" />
+          <span>
+            A different rhythm
+            <strong>
+              Japan <ArrowUpRight size={15} />
+            </strong>
+          </span>
+        </button>
         <button
           className="lt-postcard"
           onClick={() => onExplore("Bali")}
@@ -134,9 +182,6 @@ export default function TravelHero({
           </span>
         </button>
         <div className="lt-voyage-controls">
-          {motion.overridden && (
-            <button onClick={motion.useSystem}>Use system setting</button>
-          )}
           <button onClick={motion.toggle}>
             {motion.enabled ? <Pause size={14} /> : <Play size={14} />}
             {motion.enabled ? "Pause motion" : "Enable motion"}

@@ -43,6 +43,16 @@ public class PaymentController {
     return rows;
   }
 
+  @GetMapping("/transactions")
+  public List<Map<String, Object>> transactions() {
+    return db.queryForList(
+        "select b.id,b.amount,b.currency,b.status,b.provider,b.is_demo,b.created_at,"
+            + " t.title as travel_title,p.name as traveler_name from payments.bookings b"
+            + " join travel.travels t on t.id=b.travel_id"
+            + " left join identity.public_profiles p on p.id=b.user_id"
+            + " order by b.created_at desc,b.id limit 200");
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Map<String, Object> create(@Valid @RequestBody Gateway g) {

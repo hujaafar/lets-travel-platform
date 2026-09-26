@@ -100,7 +100,8 @@ jobs:
           docker compose -f compose.yml -f compose.tools.yml --profile monitoring up -d loki log-collector
       - name: Verify phase-two role and discovery workflows
         run: |
-          python scripts/seed-platform.py
+          python scripts/seed-platform.py --rich
+          python scripts/verify-demo.py
           python scripts/verify-platform.py
       - name: Verify internal TLS, database access and centralized logging
         run: |

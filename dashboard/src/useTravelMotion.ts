@@ -22,6 +22,10 @@ export function useTravelMotion(
     const observer = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
+          entry.target.classList.toggle(
+            "lt-motion-visible",
+            entry.isIntersecting,
+          );
           if (entry.isIntersecting)
             entry.target.classList.add("lt-in-view", "lt-visible");
         }),

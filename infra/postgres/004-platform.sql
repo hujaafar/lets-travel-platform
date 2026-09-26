@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS payments.bookings (
 CREATE UNIQUE INDEX IF NOT EXISTS booking_active ON payments.bookings(user_id,travel_id) WHERE status IN ('PENDING','CONFIRMED','CANCEL_REQUESTED');
 CREATE INDEX IF NOT EXISTS booking_travel ON payments.bookings(travel_id,status);
 ALTER TABLE payments.bookings ADD COLUMN IF NOT EXISTS refund_id text;
+ALTER TABLE payments.bookings ADD COLUMN IF NOT EXISTS is_demo boolean NOT NULL DEFAULT false;
+ALTER TABLE travel.travels ADD COLUMN IF NOT EXISTS is_demo boolean NOT NULL DEFAULT false;
 CREATE TABLE IF NOT EXISTS travel.feedback (
  id uuid PRIMARY KEY, travel_id uuid NOT NULL REFERENCES travel.travels ON DELETE CASCADE,
  user_id uuid NOT NULL REFERENCES identity.users ON DELETE CASCADE,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS travel.reports (
  reason varchar(2000) NOT NULL, status text NOT NULL DEFAULT 'OPEN' CHECK(status IN ('OPEN','REVIEWED','DISMISSED')),
  resolution varchar(2000), created_at timestamptz NOT NULL DEFAULT now(), reviewed_at timestamptz
 );
+ALTER TABLE travel.feedback ADD COLUMN IF NOT EXISTS is_demo boolean NOT NULL DEFAULT false;
 CREATE TABLE IF NOT EXISTS travel.search_outbox (id bigserial PRIMARY KEY,travel_id uuid NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
 CREATE OR REPLACE FUNCTION travel.enqueue_projection() RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE tid uuid;

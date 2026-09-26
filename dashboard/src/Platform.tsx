@@ -46,12 +46,14 @@ type Stop = {
   transportation: string;
 };
 type Feedback = {
+  is_demo?: boolean;
   rating: number;
   comment: string;
   name?: string;
   created_at: string;
 };
 type Trip = {
+  is_demo?: boolean;
   id: string;
   title: string;
   image: string;
@@ -70,6 +72,7 @@ type Trip = {
   reserved?: number;
 };
 type Booking = {
+  is_demo?: boolean;
   id: string;
   travel_id: string;
   title?: string;
@@ -91,12 +94,14 @@ type Report = {
   created_at: string;
 };
 type Stats = {
+  has_demo?: boolean;
   past_trips: number;
   cancellations: number;
   reports: number;
   payment_methods: { provider: string; uses: number }[];
 };
 type Analytics = {
+  has_demo?: boolean;
   monthly: {
     month: string;
     currency: string;
@@ -296,6 +301,7 @@ export default function Platform() {
       name: string;
       status: string;
       past_trips: number;
+      is_demo?: boolean;
     }[];
   } | null>(null);
   const [group, setGroup] = useState<{
@@ -876,6 +882,11 @@ export default function Platform() {
                         {b.start_date && date(b.start_date)} / {b.provider}
                       </span>
                       <h3>{b.title}</h3>
+                      {b.is_demo && (
+                        <span className="lt-demo-label">
+                          Demo booking · No provider charge
+                        </span>
+                      )}
                       <span className={"lt-status " + b.status.toLowerCase()}>
                         {b.status.replaceAll("_", " ")}
                       </span>
@@ -903,7 +914,7 @@ export default function Platform() {
                         </button>
                       )}
 
-                      {b.status === "PENDING" && (
+                      {!b.is_demo && b.status === "PENDING" && (
                         <>
                           <button
                             className="lt-button"
@@ -935,7 +946,8 @@ export default function Platform() {
                           )}
                         </>
                       )}
-                      {["PENDING", "CONFIRMED"].includes(b.status) &&
+                      {!b.is_demo &&
+                        ["PENDING", "CONFIRMED"].includes(b.status) &&
                         b.start_date &&
                         Date.now() <
                           Date.parse(b.start_date.slice(0, 10) + "T00:00:00Z") -
@@ -1030,6 +1042,12 @@ export default function Platform() {
                   )}
                 />
               </div>
+              {analytics?.has_demo && (
+                <p className="lt-demo-note">
+                  Includes simulated demo bookings and income. No provider
+                  settlement is implied.
+                </p>
+              )}
               <h3 className="lt-table-title">
                 Your journeys <span>{owned.length}</span>
               </h3>
@@ -1150,7 +1168,7 @@ export default function Platform() {
                   <h3>Manager ranking</h3>
                   <p className="lt-muted">
                     Score = average rating × 20 + confirmed bookings (up to 100)
-                    + verified USD income ÷ 100 (up to 100). Other currencies
+                    + USD booking income ÷ 100 (up to 100). Other currencies
                     stay separate in income reports.
                   </p>
                   {analytics?.managers.map((m, i) => (
@@ -1188,6 +1206,11 @@ export default function Platform() {
               <div className="lt-analytics-grid">
                 <div>
                   <h3>Payment preferences</h3>
+                  {stats?.has_demo && (
+                    <p className="lt-demo-note">
+                      Your history includes labeled demo bookings.
+                    </p>
+                  )}
                   <p className="lt-muted">
                     Based on your confirmed bookings. We never store card
                     details.
@@ -1314,6 +1337,9 @@ export default function Platform() {
                 {date(selected.start_date)} to {date(selected.end_date)}
               </span>
               <h2>{selected.title}</h2>
+              {selected.is_demo && (
+                <span className="lt-demo-label">Demo itinerary</span>
+              )}
               <p>{selected.description}</p>
               {selected.manager_id && (
                 <button
@@ -1346,6 +1372,9 @@ export default function Platform() {
               {selected.feedback?.map((f, i) => (
                 <blockquote key={i}>
                   <span>{"★".repeat(f.rating)}</span>
+                  {f.is_demo && (
+                    <span className="lt-demo-label">Demo review</span>
+                  )}
                   <p>{f.comment}</p>
                   <cite>
                     {f.name} · {date(f.created_at)}
@@ -1533,6 +1562,9 @@ export default function Platform() {
                   <span>
                     {"★".repeat(r.rating)} · {r.title}
                   </span>
+                  {r.is_demo && (
+                    <span className="lt-demo-label">Demo review</span>
+                  )}
                   <p>{r.comment}</p>
                 </blockquote>
               ))}
@@ -1597,25 +1629,29 @@ export default function Platform() {
                     <p>
                       {p.past_trips} past journeys ·{" "}
                       {p.status.replaceAll("_", " ")}
+                      {p.is_demo && (
+                        <span className="lt-demo-label">Demo booking</span>
+                      )}
                     </p>
                   </div>
                   <div>
-                    {["PENDING", "CONFIRMED"].includes(p.status) && (
-                      <button
-                        className="lt-text-button"
-                        disabled={busy}
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              "Unsubscribe this traveler and refund any completed payment?",
+                    {!p.is_demo &&
+                      ["PENDING", "CONFIRMED"].includes(p.status) && (
+                        <button
+                          className="lt-text-button"
+                          disabled={busy}
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                "Unsubscribe this traveler and refund any completed payment?",
+                              )
                             )
-                          )
-                            void cancel(p.id);
-                        }}
-                      >
-                        Unsubscribe
-                      </button>
-                    )}
+                              void cancel(p.id);
+                          }}
+                        >
+                          Unsubscribe
+                        </button>
+                      )}
                     <button
                       className="lt-text-button"
                       onClick={() =>

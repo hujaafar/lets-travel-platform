@@ -92,6 +92,7 @@ beforeEach(() => {
       session = null;
       return undefined;
     }
+    if (path === "/payments/transactions") return [];
     if (method === "GET")
       return path === "/users"
         ? users

@@ -332,7 +332,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lt-app *,
+  .lt-app:not(.lt-motion-on) *,
   .lt-admin-motion * {
     animation: none !important;
     transition: none !important;

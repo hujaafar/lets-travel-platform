@@ -1456,7 +1456,7 @@ body {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lt-app * {
+  .lt-app:not(.lt-motion-on) * {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
@@ -1809,4 +1809,21 @@ body {
   .lt-app.lt-motion-on .lt-scenes-stage {
     top: 118px;
   }
+}
+
+.lt-demo-label {
+  display: inline-block;
+  color: #edbf97;
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 7px 9px 7px 0;
+}
+.lt-demo-note {
+  padding: 13px 17px;
+  border: 1px solid #53644e;
+  color: #d7d7b9;
+  background: #243a2d;
+  font-size: 12px;
+  border-radius: 5px;
+  margin: 16px 0;
 }

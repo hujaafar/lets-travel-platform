@@ -36,12 +36,65 @@ class BookingRulesTest {
   }
 
   @Test
+  void demoPendingAndRefundFixturesNeverReachTheProvider() {
+    for (String status : List.of("PENDING", "CANCEL_REQUESTED", "CONFIRMED")) {
+      var b = row(status);
+      b.put("is_demo", true);
+      when(db.queryForList(contains("for update"), eq(id))).thenReturn(List.of(b));
+      service.process(id);
+    }
+    verifyNoInteractions(gateway);
+    verify(db, never()).update(anyString(), any(Object[].class));
+  }
+
+  @Test
+  void demoCancellationCannotImplyAProviderRefund() {
+    var b = row("CONFIRMED");
+    b.put("is_demo", true);
+    when(db.queryForList(contains("for update of b"), eq(id))).thenReturn(List.of(b));
+    assertThatThrownBy(() -> service.cancel(id, traveler))
+        .isInstanceOf(ResponseStatusException.class)
+        .hasMessageContaining("Demo bookings are read-only");
+    verifyNoInteractions(gateway);
+    verify(db, never()).update(anyString(), any(Object[].class));
+  }
+
+  @Test
   void cutoffIsExactUtcBoundary() {
     var date = LocalDate.of(2027, 1, 10);
     assertThatCode(() -> BookingService.cutoff(date, Instant.parse("2027-01-06T23:59:59Z")))
         .doesNotThrowAnyException();
     assertThatThrownBy(() -> BookingService.cutoff(date, Instant.parse("2027-01-07T00:00:00Z")))
         .isInstanceOf(ResponseStatusException.class);
+  }
+
+  @Test
+  void aDemoReservationCannotBeReusedForProviderCheckout() {
+    when(gateway.configured("STRIPE")).thenReturn(true);
+    when(db.queryForList(startsWith("select * from travel.travels"), eq(trip)))
+        .thenReturn(
+            List.of(
+                Map.of(
+                    "start_date",
+                    java.sql.Date.valueOf(LocalDate.now().plusDays(20)),
+                    "status",
+                    "PUBLISHED",
+                    "price",
+                    BigDecimal.TEN,
+                    "currency",
+                    "USD",
+                    "capacity",
+                    12)));
+    when(db.queryForObject(
+            contains("payments.gateways"), eq(Integer.class), eq("STRIPE"), eq("USD")))
+        .thenReturn(1);
+    when(db.queryForList(contains("select id,provider,is_demo"), eq(userId), eq(trip)))
+        .thenReturn(List.of(Map.of("id", id, "provider", "STRIPE", "is_demo", true)));
+    assertThatThrownBy(() -> service.reserve(trip, "STRIPE", traveler))
+        .isInstanceOf(ResponseStatusException.class)
+        .hasMessageContaining("read-only demo booking");
+    verify(db, never()).update(anyString(), any(Object[].class));
+    verify(gateway, never()).create(anyMap());
   }
 
   @Test

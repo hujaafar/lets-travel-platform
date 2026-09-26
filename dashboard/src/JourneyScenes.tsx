@@ -18,7 +18,15 @@ export default function JourneyScenes<T extends Scene>({
 }) {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
-  const scenes = trips.slice(0, 3);
+  const seen = new Set<string>();
+  const scenes = trips
+    .filter((trip) => {
+      const place = (trip.stops[0]?.country || trip.title).trim().toLowerCase();
+      if (seen.has(place)) return false;
+      seen.add(place);
+      return true;
+    })
+    .slice(0, 3);
   const count = scenes.length;
   const sceneKey = scenes.map((trip) => trip.id).join(",");
   const current = Math.min(active, Math.max(0, count - 1));
