@@ -71,6 +71,11 @@ test("admin transaction journal shows labeled examples and filters their statuse
     path: `../work/verification/${info.project.name}-demo-ledger.png`,
   });
   await page.setViewportSize({ width: 390, height: 844 });
+  const scrollable = page.getByRole("region", {
+    name: "Scrollable transaction table",
+  });
+  await scrollable.focus();
+  await expect(scrollable).toBeFocused();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

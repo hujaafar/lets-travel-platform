@@ -92,7 +92,12 @@ export default function TransactionLedger() {
           </select>
         </label>
       </div>
-      <div className="ledger-scroll">
+      <div
+        className="ledger-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label="Scrollable transaction table"
+      >
         <table>
           <caption className="ledger-caption">
             {loading
