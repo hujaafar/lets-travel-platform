@@ -24,6 +24,10 @@ test("scroll changes the hero, photographs, route and destination with native na
     page.getByRole("heading", { name: "Find your kind of elsewhere." }),
   ).toBeVisible();
   const scene = page.locator(".lt-scenes");
+  const destinations = await page
+    .locator(".lt-scene-tabs button")
+    .allTextContents();
+  expect(new Set(destinations).size).toBe(destinations.length);
   const positions = await scene.evaluate((e) => ({
     top:
       e.getBoundingClientRect().top +
