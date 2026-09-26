@@ -184,7 +184,8 @@ println JsonOutput.toJson([secret:n.toComputer().getJnlpMac()])
     report = {'revision': revision, 'observed_at': datetime.now(timezone.utc).isoformat(), 'jenkins': status,
               'run_url': os.environ['GITHUB_SERVER_URL'] + '/' + os.environ['GITHUB_REPOSITORY'] + '/actions/runs/' + os.environ['GITHUB_RUN_ID'],
               'scope': 'Real Jenkins pipeline and fresh candidate Sonar analysis; no native Sonar PR decoration or persistent baseline; no deployment/provider credentials.'}
-    for label, path in [('gate', '/api/qualitygates/project_status?projectKey=' + PROJECT),
+    for label, path in [('issues', '/api/issues/search?componentKeys=' + PROJECT + '&types=BUG,VULNERABILITY&ps=500'),
+                        ('gate', '/api/qualitygates/project_status?projectKey=' + PROJECT),
                         ('gate_definition', '/api/qualitygates/show?name=' + urllib.parse.quote(gate_name)),
                         ('metrics', '/api/measures/component?component=' + PROJECT + '&metricKeys=bugs,vulnerabilities,coverage,code_smells,security_hotspots,duplicated_lines_density,ncloc')]:
         try:

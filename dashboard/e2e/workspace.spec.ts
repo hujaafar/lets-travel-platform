@@ -359,11 +359,19 @@ test("API validates roles, CSRF, cascading deletes, stale edits, and revoked ses
         })
       ).status(),
     ).toBe(200);
-    expect(
-      (
-        await admin.post("/api/payments/" + gatewayId + "/test", { headers })
-      ).status(),
-    ).toBe(503);
+    const gateways = await (await admin.get("/api/payments")).json();
+    const configured = gateways.find(
+      (g: { id: string }) => g.id === gatewayId,
+    ).configured;
+    const providerTest = await admin.post(
+      "/api/payments/" + gatewayId + "/test",
+      { headers },
+    );
+    expect(providerTest.status()).toBe(configured ? 200 : 503);
+    if (configured)
+      expect((await providerTest.json()).message).toBe(
+        "Sandbox credentials verified",
+      );
     expect(
       (await admin.delete("/api/users/" + me.id, { headers })).status(),
     ).toBe(409);
