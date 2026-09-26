@@ -40,19 +40,16 @@ public class PlatformController {
     if (q.length() > 100) throw new IllegalArgumentException("Search is too long");
     var ids = q.isBlank() ? null : discovery.search(q);
     if (ids != null && ids.isEmpty()) return List.of();
-    String restriction =
-        ids == null
-            ? ""
-            : " and t.id::text in (" + String.join(",", Collections.nCopies(ids.size(), "?")) + ")";
     var rows =
-        db.queryForList(
-            "select t.*, p.name as manager_name, (select count(*) from payments.bookings b where"
-                + " b.travel_id=t.id and b.status in ('PENDING','CONFIRMED','CANCEL_REQUESTED')) as"
-                + " reserved from travel.travels t left join identity.public_profiles p on"
-                + " p.id=t.manager_id where t.status='PUBLISHED' and t.start_date>current_date+3"
-                + restriction
-                + " order by t.start_date limit 200",
-            ids == null ? new Object[] {} : ids.toArray());
+        new org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate(db)
+            .queryForList(
+                "select t.*, p.name as manager_name, (select count(*) from payments.bookings b"
+                    + " where b.travel_id=t.id and b.status in"
+                    + " ('PENDING','CONFIRMED','CANCEL_REQUESTED')) as reserved from travel.travels"
+                    + " t left join identity.public_profiles p on p.id=t.manager_id where"
+                    + " t.status='PUBLISHED' and t.start_date>current_date+3 and (:unfiltered or"
+                    + " t.id::text in (:ids)) order by t.start_date limit 200",
+                Map.of("unfiltered", ids == null, "ids", ids == null ? List.of("") : ids));
     rows.forEach(this::details);
     return rows;
   }
@@ -152,12 +149,14 @@ public class PlatformController {
       @Valid @RequestBody TravelController.TravelInput input,
       @RequestAttribute("user") SessionUser user) {
     own(id, user);
-    var booked =
-        db.queryForObject(
-            "select count(*) from payments.bookings where travel_id=? and status in"
-                + " ('PENDING','CONFIRMED','CANCEL_REQUESTED')",
-            Integer.class,
-            id);
+    int booked =
+        Objects.requireNonNull(
+            db.queryForObject(
+                "select count(*) from payments.bookings where travel_id=? and status in"
+                    + " ('PENDING','CONFIRMED','CANCEL_REQUESTED')",
+                Integer.class,
+                id),
+            "Booking count missing");
     var current = db.queryForMap("select start_date,end_date from travel.travels where id=?", id);
     if (booked > 0
         && (!input.startDate().equals(((java.sql.Date) current.get("start_date")).toLocalDate())
@@ -377,11 +376,14 @@ public class PlatformController {
     var managers =
         all
             ? db.queryForList(
-                "select x.*,round(x.rating*20,1)+least(x.travelers,100) as score from (select"
-                    + " p.id,p.name,(select count(*) from travel.travels t where t.manager_id=p.id)"
-                    + " as trips,(select count(*) from payments.bookings b join travel.travels t on"
-                    + " t.id=b.travel_id where t.manager_id=p.id and b.status='CONFIRMED') as"
-                    + " travelers,coalesce((select round(avg(f.rating),2) from travel.feedback f"
+                "select x.*,round(x.rating*20,1)+least(x.travelers,100)+least(x.income_usd/100,100)"
+                    + " as score from (select p.id,p.name,(select count(*) from travel.travels t"
+                    + " where t.manager_id=p.id) as trips,(select count(*) from payments.bookings b"
+                    + " join travel.travels t on t.id=b.travel_id where t.manager_id=p.id and"
+                    + " b.status='CONFIRMED') as travelers,(select coalesce(sum(b.amount),0) from"
+                    + " payments.bookings b join travel.travels t on t.id=b.travel_id where"
+                    + " t.manager_id=p.id and b.status='CONFIRMED' and b.currency='USD') as"
+                    + " income_usd, coalesce((select round(avg(f.rating),2) from travel.feedback f"
                     + " join travel.travels t on t.id=f.travel_id where t.manager_id=p.id),0) as"
                     + " rating from identity.public_profiles p where p.role in"
                     + " ('ADMIN','TRAVEL_MANAGER')) x order by score desc")

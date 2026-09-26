@@ -114,6 +114,7 @@ type Analytics = {
     travelers: number;
     rating: number;
     score: number;
+    income_usd: number;
   }[];
 };
 const money = (value: number | string, currency = "USD") =>
@@ -599,7 +600,7 @@ export default function Platform() {
                 <small>At least 12 characters. Use a unique password.</small>
               )}
             </label>
-            <button className="lt-button" disabled={busy}>
+            <button type="submit" className="lt-button" disabled={busy}>
               {busy ? "Please wait…" : signup ? "Create account" : "Sign in"}
               <ArrowRight size={18} />
             </button>
@@ -781,7 +782,7 @@ export default function Platform() {
                           <option key={s} value={s} />
                         ))}
                       </datalist>
-                      <button aria-label="Search">
+                      <button type="submit" aria-label="Search">
                         <ArrowRight size={20} />
                       </button>
                     </form>
@@ -1172,8 +1173,9 @@ export default function Platform() {
                 <>
                   <h3>Manager ranking</h3>
                   <p className="lt-muted">
-                    Score = average rating × 20 + confirmed bookings (up to
-                    100). Income is shown separately by currency.
+                    Score = average rating × 20 + confirmed bookings (up to 100)
+                    + verified USD income ÷ 100 (up to 100). Other currencies
+                    stay separate in income reports.
                   </p>
                   {analytics?.managers.map((m, i) => (
                     <button
@@ -1185,8 +1187,8 @@ export default function Platform() {
                         {String(i + 1).padStart(2, "0")} &nbsp; {m.name}
                       </span>
                       <span>
-                        {m.trips} journeys · {m.travelers} travelers · score{" "}
-                        {m.score}
+                        {m.trips} journeys · {m.travelers} travelers ·{" "}
+                        {money(m.income_usd)} USD income · score {m.score}
                       </span>
                       <ArrowUpRight size={18} />
                     </button>
@@ -1276,7 +1278,11 @@ export default function Platform() {
                               maxLength={2000}
                             />
                           </label>
-                          <button className="lt-button" disabled={busy}>
+                          <button
+                            type="submit"
+                            className="lt-button"
+                            disabled={busy}
+                          >
                             Save decision
                           </button>
                         </form>
@@ -1483,7 +1489,7 @@ export default function Platform() {
                 Tell us about the experience
                 <textarea required maxLength={2000} name="comment" />
               </label>
-              <button className="lt-button" disabled={busy}>
+              <button type="submit" className="lt-button" disabled={busy}>
                 Publish feedback
               </button>
             </form>
@@ -1522,7 +1528,7 @@ export default function Platform() {
                   maxLength={2000}
                 />
               </label>
-              <button className="lt-button" disabled={busy}>
+              <button type="submit" className="lt-button" disabled={busy}>
                 Submit report
               </button>
             </form>
@@ -1887,7 +1893,7 @@ function Editor({
           Once a trip has bookings, dates are protected. Refund and cancel
           existing bookings before changing the schedule.
         </p>
-        <button className="lt-button" disabled={busy}>
+        <button type="submit" className="lt-button" disabled={busy}>
           {busy ? "Saving…" : "Save journey"}
           <ArrowRight size={18} />
         </button>

@@ -18,6 +18,7 @@ public class CheckoutGateway {
 
   public record Settlement(boolean paid, boolean expired, String capture) {}
 
+  @org.springframework.beans.factory.annotation.Autowired
   public CheckoutGateway(
       @Value("${STRIPE_SECRET_KEY:}") String stripe,
       @Value("${PAYPAL_CLIENT_ID:}") String id,
@@ -33,6 +34,14 @@ public class CheckoutGateway {
     client = RestClient.builder().requestFactory(f).build();
   }
 
+  CheckoutGateway(String stripe, String id, String secret, String origin, RestClient client) {
+    this.stripe = stripe;
+    this.paypalId = id;
+    this.paypalSecret = secret;
+    this.origin = origin;
+    this.client = client;
+  }
+
   public boolean configured(String provider) {
     return "STRIPE".equals(provider)
         ? stripe.startsWith("sk_test_")
@@ -40,7 +49,7 @@ public class CheckoutGateway {
   }
 
   private String token() {
-    return Objects.toString(
+    var response =
         client
             .post()
             .uri("https://api-m.sandbox.paypal.com/v1/oauth2/token")
@@ -48,8 +57,11 @@ public class CheckoutGateway {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body("grant_type=client_credentials")
             .retrieve()
-            .body(Map.class)
-            .get("access_token"));
+            .body(Map.class);
+    Object token = Objects.requireNonNull(response, "Empty OAuth response").get("access_token");
+    if (!(token instanceof String value) || value.isBlank())
+      throw new IllegalStateException("Missing OAuth token");
+    return value;
   }
 
   @SuppressWarnings("unchecked")
@@ -69,7 +81,7 @@ public class CheckoutGateway {
     var form = new LinkedMultiValueMap<String, String>();
     fields.forEach(form::add);
     if (!"GET".equals(method)) req.contentType(MediaType.APPLICATION_FORM_URLENCODED).body(form);
-    return req.retrieve().body(Map.class);
+    return Objects.requireNonNull(req.retrieve().body(Map.class), "Provider response was empty");
   }
 
   @SuppressWarnings("unchecked")
@@ -85,7 +97,7 @@ public class CheckoutGateway {
                   if (key != null) h.set("PayPal-Request-Id", key);
                 });
     if (body != null) req.contentType(MediaType.APPLICATION_JSON).body(body);
-    return req.retrieve().body(Map.class);
+    return Objects.requireNonNull(req.retrieve().body(Map.class), "Provider response was empty");
   }
 
   public Hosted create(Map<String, Object> b) {

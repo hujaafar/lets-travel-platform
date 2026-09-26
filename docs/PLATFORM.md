@@ -34,4 +34,4 @@ The browser cannot supply a price, currency, provider payment ID or confirmed st
 
 ## Analytics
 
-Monthly income covers confirmed bookings in the last six calendar months, grouped by currency, excluding cancellations/refunds. Manager score is `average rating × 20 + min(confirmed bookings, 100)`; money remains separately grouped by currency. Personal statistics cover completed trips, cancellations/refunds, reports and methods used in confirmed bookings.
+Monthly income covers confirmed bookings in the last six calendar months, grouped by currency, excluding cancellations/refunds. Manager score is `average rating × 20 + min(confirmed bookings, 100) + min(verified USD income / 100, 100)`; money remains separately grouped by currency. Personal statistics cover completed trips, cancellations/refunds, reports and methods used in confirmed bookings.

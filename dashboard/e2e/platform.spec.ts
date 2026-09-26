@@ -21,6 +21,7 @@ for (const role of ["traveler", "manager"]) {
       page.getByRole("heading", { name: "Less ordinary. More alive." }),
     ).toBeVisible();
     await expect(page.locator(".lt-card").first()).toBeVisible();
+    await expect(page.getByText(/NaN/)).toHaveCount(0);
     const heroAnimation = await page
       .locator(".lt-marquee > div")
       .evaluate((e) => getComputedStyle(e).animationName);

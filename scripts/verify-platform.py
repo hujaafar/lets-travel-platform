@@ -61,17 +61,21 @@ def run():
         t.request('/bookings/'+booking+'/cancel','POST',{},409)
         assert t.request('/profile')['past_trips']==1
         assert m.request('/manage/travels/'+historic+'/subscribers')[0]['user_id']==t.user['id']
-        check('past-trip feedback, personal statistics, subscriber profiles and cutoff')
+        assert t.request('/explore/'+historic+'/community')[0]['id']==t.user['id']
+        m.request('/explore/'+historic+'/community',status=403)
+        check('past-trip feedback, personal statistics, subscriber profiles, private community and cutoff')
         deadline=time.monotonic()+90
         while time.monotonic()<deadline:
             recommendation=t.request('/explore/recommendations')
             if recommendation['basis'].startswith('Based on') and any(r['id']==trip for r in recommendation['trips']):break
             time.sleep(3)
         else:raise AssertionError('Neo4j did not personalize from completed travel fields')
+        assert all(r.get('end_date') and r.get('stops') for r in recommendation['trips'])
         check('Neo4j recommendations from destination, activity and transport plus rating')
         analytic=a.request('/manage/analytics')
         assert any(r['id']==historic and float(r['income'])==12 for r in analytic['trips'])
-        assert any(r['id']==m.user['id'] for r in analytic['managers'])
+        ranked=next(r for r in analytic['managers'] if r['id']==m.user['id'])
+        assert float(ranked['income_usd'])==12 and float(ranked['score'])==101.12
         check('admin rankings, histories and currency-separated income')
         a.request('/travels/'+historic,'PUT',{**payload,'startDate':str(start),'endDate':str(start+dt.timedelta(days=5))},409)
         check('legacy admin route cannot change dates beneath a paid booking')

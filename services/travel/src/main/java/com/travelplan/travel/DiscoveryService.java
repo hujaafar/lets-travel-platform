@@ -59,7 +59,9 @@ public class DiscoveryService {
                       List.of("text", "text._2gram", "text._3gram"))));
       Map<String, Object> response =
           elastic.post().uri("/journeys/_search").body(body).retrieve().body(Map.class);
-      return (List<Map<String, Object>>) ((Map<?, ?>) response.get("hits")).get("hits");
+      return (List<Map<String, Object>>)
+          ((Map<?, ?>) Objects.requireNonNull(response, "Empty search response").get("hits"))
+              .get("hits");
     } catch (Exception e) {
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE,
@@ -220,21 +222,30 @@ public class DiscoveryService {
                       .list(r -> r.get("id").asString()));
       var rows =
           db.queryForList(
-              "select id,title,image,price,currency,start_date,description from travel.travels"
-                  + " where status='PUBLISHED' and start_date>current_date+3 order by start_date"
-                  + " limit 200");
+              "select id,title,image,price,currency,start_date,end_date,description from"
+                  + " travel.travels where status='PUBLISHED' and start_date>current_date+3 order"
+                  + " by start_date limit 200");
       if (!ranked.isEmpty()) {
         rows.removeIf(t -> !ranked.contains(t.get("id").toString()));
         rows.sort(Comparator.comparingInt(t -> ranked.indexOf(t.get("id").toString())));
       }
+      var suggestions = rows.stream().limit(6).toList();
+      suggestions.forEach(
+          row ->
+              row.put(
+                  "stops",
+                  db.queryForList(
+                      "select destination,country,activities,accommodation,transportation from"
+                          + " travel.stops where travel_id=? order by position",
+                      row.get("id"))));
       return Map.of(
           "basis",
           ranked.isEmpty()
               ? "Discover something new"
               : "Based on destinations, activities and transportation from your bookings and"
-                    + " ratings",
+                  + " ratings",
           "trips",
-          rows.stream().limit(6).toList());
+          suggestions);
     } catch (Exception e) {
       throw new ResponseStatusException(
           HttpStatus.SERVICE_UNAVAILABLE, "Personal recommendations are temporarily unavailable");
