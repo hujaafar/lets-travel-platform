@@ -1,0 +1,113 @@
+---
+- name: Deploy Travel Plan consistently
+  hosts: travel_hosts
+  become: true
+  serial: 1
+  vars:
+    app_dir: /opt/travel-plan
+    source_dir: "{{ playbook_dir }}/../.."
+    replica_count: 2
+    deploy_tooling: false
+    # Pre-provisioned hosts (including disposable CI runners) keep their engine.
+    manage_system_packages: true
+  pre_tasks:
+    - name: Verify supported operating system
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.distribution == 'Ubuntu'
+          - ansible_facts.distribution_release in ['jammy', 'noble']
+        fail_msg: This package recipe supports Ubuntu 22.04 LTS or 24.04 LTS with the universe repository enabled.
+    - name: Validate deployment inputs
+      ansible.builtin.assert:
+        that:
+          - app_dir is match('^/.+')
+          - app_dir not in ['/', '/home', '/opt', '/usr', '/var', '/tmp']
+          - replica_count | int >= 1
+        fail_msg: Use a dedicated absolute application directory and a positive replica count.
+    - name: Install system prerequisites
+      ansible.builtin.apt:
+        name:
+          [
+            docker.io,
+            docker-compose-v2,
+            python3-venv,
+            openjdk-17-jre-headless,
+            ca-certificates,
+          ]
+        state: present
+        update_cache: true
+      when: manage_system_packages | bool
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+      when: manage_system_packages | bool
+    - name: Verify Docker daemon access
+      ansible.builtin.command:
+        argv: [docker, info, --format, "{{ '{{.ServerVersion}}' }}"]
+      changed_when: false
+    - name: Verify Docker Compose is available
+      ansible.builtin.command:
+        argv: [docker, compose, version]
+      changed_when: false
+  tasks:
+    - name: Create private deployment directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: "0700"
+    - name: Copy reviewed source archive
+      ansible.builtin.unarchive:
+        src: "{{ artifact_path }}"
+        dest: "{{ app_dir }}"
+        owner: root
+        group: root
+      when: artifact_path is defined
+    - name: Require a reviewed artifact or existing checkout
+      ansible.builtin.stat:
+        path: "{{ app_dir }}/compose.yml"
+      register: compose_source
+    - name: Validate source
+      ansible.builtin.assert:
+        that: compose_source.stat.exists
+        fail_msg: Set artifact_path to a source tar.gz or provision an existing reviewed checkout.
+    - name: Install bootstrap dependencies in an isolated environment
+      ansible.builtin.pip:
+        name: cryptography==46.0.3
+        virtualenv: "{{ app_dir }}/.venv"
+        virtualenv_command: python3 -m venv
+    - name: Initialize development PKI and scoped Vault credentials
+      ansible.builtin.command:
+        argv: ["{{ app_dir }}/.venv/bin/python", scripts/bootstrap.py]
+        chdir: "{{ app_dir }}"
+      no_log: true
+      # Reapplying preserves stored records/passwords but rotates AppRole credentials.
+      changed_when: true
+    - name: Deploy database and secret agents
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        services:
+          [postgres, neo4j, vault, identity-agent, travel-agent, payments-agent]
+        state: present
+        wait: true
+        wait_timeout: 180
+    - name: Deploy application replicas
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        services: [identity, travel, payments, dashboard]
+        build: always
+        scale:
+          identity: "{{ replica_count | int }}"
+          travel: "{{ replica_count | int }}"
+          payments: "{{ replica_count | int }}"
+        wait: true
+        wait_timeout: 240
+    - name: Optionally start CI and monitoring tools
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        files: [compose.yml, compose.tools.yml]
+        profiles: [tools, monitoring]
+        build: always
+        state: present
+      when: deploy_tooling | bool

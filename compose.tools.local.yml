@@ -1,0 +1,7 @@
+# Use while the application is stopped on a 4 GB Docker Desktop runtime.
+# Keeps Elasticsearch bootstrap checks enabled. Not a production sizing claim.
+services:
+  sonarqube:
+    environment:
+      SONAR_WEB_JAVAOPTS: -Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError
+      SONAR_CE_JAVAOPTS: -Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError

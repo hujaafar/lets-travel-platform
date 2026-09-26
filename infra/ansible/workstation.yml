@@ -1,0 +1,40 @@
+---
+- name: Deploy Travel Plan through Docker Desktop from a WSL controller
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    replica_count: 2
+    build_images: true
+  pre_tasks:
+    - name: Require explicit Windows checkout and Python paths
+      ansible.builtin.assert:
+        that:
+          - windows_checkout is defined
+          - windows_python is defined
+          - windows_checkout is match('^[A-Za-z]:/')
+          - windows_python is match('^/mnt/[a-z]/.+[.]exe$')
+          - replica_count | int in [1, 2]
+        fail_msg: Supply windows_checkout using C:/path notation and the WSL path to Windows python.exe; replica_count must be 1 or 2.
+    - name: Verify Windows Python is available
+      ansible.builtin.stat:
+        path: "{{ windows_python }}"
+      register: python_binary
+    - name: Validate the controller executable
+      ansible.builtin.assert:
+        that: python_binary.stat.isreg | default(false)
+  tasks:
+    - name: Build, provision scoped secrets, and wait for application replicas
+      ansible.builtin.command:
+        argv: "{{ [windows_python, windows_checkout + '/scripts/start.py', '--replicas', replica_count | string] + ([] if build_images | bool else ['--no-build']) }}"
+      # Bootstrap creates AppRole credentials. Never expose provisioning output in CI.
+      no_log: true
+      changed_when: true
+    - name: Verify database privileges, graph convergence, and TLS
+      ansible.builtin.command:
+        argv:
+          [
+            "{{ windows_python }}",
+            "{{ windows_checkout }}/scripts/verify-infrastructure.py",
+          ]
+      changed_when: false

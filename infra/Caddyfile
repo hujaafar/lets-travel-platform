@@ -1,0 +1,123 @@
+{
+ admin off
+ auto_https off
+ # Java may omit SNI for a single-label Docker hostname. Keep TLS verification
+ # enabled and select the existing certificate containing dashboard and localhost.
+ default_sni dashboard
+ # Compose publishes TCP only; do not advertise an unreachable HTTP/3 endpoint.
+ servers {
+  protocols h1 h2
+ }
+}
+https://localhost:8443 {
+ tls /certs/tls.crt /certs/tls.key
+ encode zstd gzip
+ header {
+  X-Content-Type-Options nosniff
+  X-Frame-Options DENY
+  Referrer-Policy strict-origin-when-cross-origin
+  Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+ }
+ @identity path /api/auth/* /api/users /api/users/*
+ handle @identity {
+  reverse_proxy {
+   dynamic a {
+    name identity
+    port 8443
+    refresh 5s
+   }
+   transport http {
+    tls
+    tls_server_name identity
+    tls_trust_pool file /certs/ca.crt
+   }
+   lb_policy round_robin
+   lb_try_duration 3s
+   fail_duration 10s
+  }
+ }
+ handle /api/travels* {
+  reverse_proxy {
+   dynamic a {
+    name travel
+    port 8443
+    refresh 5s
+   }
+   transport http {
+    tls
+    tls_server_name travel
+    tls_trust_pool file /certs/ca.crt
+   }
+   lb_policy round_robin
+   lb_try_duration 3s
+   fail_duration 10s
+  }
+ }
+ handle /api/payments* {
+  reverse_proxy {
+   dynamic a {
+    name payments
+    port 8443
+    refresh 5s
+   }
+   transport http {
+    tls
+    tls_server_name payments
+    tls_trust_pool file /certs/ca.crt
+   }
+   lb_policy round_robin
+   lb_try_duration 3s
+   fail_duration 10s
+  }
+ }
+ handle /api/* {
+  respond "Not found" 404
+ }
+ handle /internal/* {
+  respond "Not found" 404
+ }
+ handle {
+  root * /srv
+  try_files {path} /index.html
+  file_server
+ }
+ log {
+  output stdout
+  format filter {
+   wrap json
+   fields {
+    request>headers>X-Csrf-Token delete
+    request>headers>X-Service-Key delete
+   }
+  }
+ }
+}
+
+# Unpublished listener for read-only session verification. Identity still checks
+# the service key. Both hops verify TLS; business mutations are never retried here.
+https://dashboard:9444 {
+ tls /certs/tls.crt /certs/tls.key
+ handle /internal/session {
+  reverse_proxy {
+   dynamic a {
+    name identity
+    port 8443
+    refresh 2s
+   }
+   transport http {
+    tls
+    tls_server_name identity
+    tls_trust_pool file /certs/ca.crt
+    dial_timeout 1s
+   }
+   lb_policy round_robin
+   lb_try_duration 3s
+   lb_retry_match method POST
+   fail_duration 10s
+  }
+ }
+ handle {
+  respond "Not found" 404
+ }
+}

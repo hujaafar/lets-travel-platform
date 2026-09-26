@@ -1,0 +1,134 @@
+name: Travel Plan review
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  jenkins:
+    name: travel-plan/jenkins
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Prepare isolated runner
+        timeout-minutes: 5
+        run: |
+          python -m pip install -r scripts/requirements.txt
+          sudo sysctl -w vm.max_map_count=524288
+          python scripts/prepare-ci-review.py
+          python scripts/bootstrap.py
+          docker compose stop postgres vault
+      - name: Build Jenkins controller and isolated agent
+        run: |
+          docker compose -f compose.yml -f compose.tools.yml --profile tools build jenkins
+          docker build -f infra/jenkins/agent.Dockerfile -t travel-plan-ci-agent:github .
+      - name: Execute Jenkins pipeline and Sonar gate
+        run: python scripts/github-ci.py
+      - name: Diagnose failed CI startup
+        if: failure()
+        run: python scripts/ci-diagnostics.py
+      - name: Upload sanitized Jenkins and Sonar evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: jenkins-sonar-evidence
+          path: |
+            work/github-ci/
+            work/verification/runtime-diagnostics.log
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Stop disposable CI services
+        if: always()
+        run: |
+          docker stop travel-plan-github-agent 2>/dev/null || true
+          docker compose -f compose.yml -f compose.tools.yml --profile tools stop
+
+  integration:
+    name: travel-plan/live-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PLAYWRIGHT_CHROMIUM: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Deploy two replicas through Ansible on Ubuntu
+        run: |
+          set -o pipefail
+          python -m pip install -r scripts/requirements.txt ansible-core==2.19.0
+          ansible-galaxy collection install -r infra/ansible/requirements.yml
+          mkdir -p work/verification
+          printf '[travel_hosts]\nlocalhost ansible_connection=local ansible_become=false\n' > work/ci-inventory.ini
+          ansible-playbook -i work/ci-inventory.ini infra/ansible/deploy.yml \
+            --extra-vars "app_dir=$GITHUB_WORKSPACE" \
+            --extra-vars '{"manage_system_packages":false,"replica_count":2}' \
+            | tee work/verification/ansible-deploy.log
+          docker compose -f compose.yml -f compose.tools.yml --profile monitoring up -d loki log-collector
+      - name: Verify internal TLS, database access and centralized logging
+        run: |
+          python scripts/verify-infrastructure.py
+          python scripts/verify-logging.py --report work/verification/logging.json
+      - name: Verify safe Ansible reapplication
+        run: python scripts/verify-redeploy.py --inventory work/ci-inventory.ini
+      - name: Verify independent service deployment and scaling
+        run: python scripts/verify-service-deploy.py --inventory work/ci-inventory.ini
+      - name: Run live Chrome and Firefox tests
+        working-directory: dashboard
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium firefox
+          npm run test:e2e
+      - name: Verify Java replica recovery
+        run: python scripts/verify-failover.py --run-failover --report work/verification/failover.json
+      - name: Verify concurrent load and replica distribution
+        run: python scripts/verify-load.py --run-load --report work/verification/load.json
+      - name: Diagnose failed application checks
+        if: failure()
+        run: python scripts/ci-diagnostics.py
+      - name: Upload live test evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: live-test-evidence
+          path: |
+            work/verification/
+            dashboard/playwright-report/
+            dashboard/test-results/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Stop disposable application
+        if: always()
+        run: docker compose -f compose.yml -f compose.tools.yml --profile monitoring stop

@@ -1,0 +1,6 @@
+# Pass this file with -e @your-workstation.yml after setting these local paths.
+# WSL runs the controller; Windows Python uses Docker Desktop's native CLI and mounts.
+windows_checkout: C:/Users/YOUR_NAME/Desktop/travel-plan
+windows_python: /mnt/c/Users/YOUR_NAME/AppData/Local/Programs/Python/Python313/python.exe
+replica_count: 2
+build_images: true

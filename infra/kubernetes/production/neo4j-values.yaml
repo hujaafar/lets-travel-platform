@@ -1,0 +1,25 @@
+# Requires the official Neo4j Helm chart and a valid Enterprise license.
+# Deployment is intentionally blocked until the operator supplies the license
+# acceptance value and a topology-appropriate storage class.
+neo4j:
+  name: travel-plan-graph
+  edition: enterprise
+  acceptLicenseAgreement: "no"
+  minimumClusterSize: 3
+volumes:
+  data:
+    mode: dynamic
+    dynamic:
+      storageClassName: multi-zone-block
+      requests:
+        storage: 20Gi
+config:
+  server.bolt.tls_level: REQUIRED
+  dbms.security.auth_enabled: "true"
+podSpec:
+  podAntiAffinity: true
+services:
+  neo4j:
+    enabled: false
+  admin:
+    enabled: false

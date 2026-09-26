@@ -1,0 +1,54 @@
+// Explicit local source review on a dedicated container. This job has no Docker
+// daemon or application secrets; deployment/browser evidence is collected separately.
+pipeline {
+  agent { label 'travel-plan-review' }
+  options { timestamps(); disableConcurrentBuilds(); timeout(time: 25, unit: 'MINUTES') }
+  environment {
+    // Bound forked test JVMs as well as Maven on the workstation review agent.
+    JAVA_TOOL_OPTIONS = '-Xmx256m -XX:ActiveProcessorCount=2'
+    NODE_OPTIONS = '--max-old-space-size=384'
+    SONAR_HOST_URL = 'https://sonarqube:9443'
+    SONAR_SCANNER_JAVA_OPTS = '-Xmx384m -XX:ActiveProcessorCount=2 -Djavax.net.ssl.trustStore=/certs/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit'
+  }
+  stages {
+    stage('Verify review source') {
+      steps {
+        deleteDir()
+        sh 'cd /review && sha256sum -c source.sha256'
+        sh 'tar -xf /review/source.tar --no-same-owner'
+        sh 'cat /review/revision.txt'
+      }
+    }
+    stage('Java tests and coverage') {
+      // A separate Sonar invocation needs reactor dependencies in the local repository.
+      steps { sh './mvnw -B -ntp install' }
+      post { always { junit 'services/**/target/surefire-reports/*.xml' } }
+    }
+    stage('Dashboard checks') {
+      steps {
+        dir('dashboard') {
+          sh 'npm ci'
+          sh 'npx prettier --check src e2e scripts'
+          sh 'npm run build'
+          sh 'npm run test:coverage -- --reporter=default --reporter=junit --outputFile.junit=test-results/unit.xml'
+          sh 'npm audit --audit-level=moderate'
+        }
+      }
+      post { always { junit allowEmptyResults: true, testResults: 'dashboard/test-results/unit.xml' } }
+    }
+    stage('Provisioning and deployment configuration') {
+      steps {
+        sh 'python3 -m unittest discover -s scripts/tests -v'
+        sh 'python3 scripts/verify-manifests.py --require-ansible --report work/verification/manifests.json'
+      }
+    }
+    stage('SonarQube review and quality gate') {
+      steps {
+        withCredentials([string(credentialsId: 'travel-plan-review-sonar', variable: 'SONAR_TOKEN')]) {
+          sh './mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=travel-plan-review -Dsonar.scanner.skipJreProvisioning=true -Dsonar.qualitygate.wait=true'
+        }
+      }
+    }
+  }
+  post { always { archiveArtifacts artifacts: 'services/**/target/site/jacoco/**,dashboard/coverage/**,work/verification/manifests.json', allowEmptyArchive: true } }
+}

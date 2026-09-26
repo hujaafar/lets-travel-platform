@@ -1,0 +1,34 @@
+# Requires CloudNativePG. Replace storageClass before applying.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: travel-plan-postgres
+  namespace: travel-data
+spec:
+  instances: 3
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 20Gi
+    storageClass: multi-zone-block
+  walStorage:
+    size: 10Gi
+    storageClass: multi-zone-block
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: topology.kubernetes.io/zone
+  postgresql:
+    parameters:
+      ssl_min_protocol_version: TLSv1.3
+      password_encryption: scram-sha-256
+  backup:
+    retentionPolicy: 30d
+    barmanObjectStore:
+      destinationPath: s3://REPLACE_ME/travel-plan/postgres
+      endpointURL: https://REPLACE_ME
+      s3Credentials:
+        accessKeyId: {name: postgres-backup, key: ACCESS_KEY_ID}
+        secretAccessKey: {name: postgres-backup, key: ACCESS_SECRET_KEY}
+      wal: {compression: gzip}
+      data: {compression: gzip}
+  monitoring:
+    enablePodMonitor: true

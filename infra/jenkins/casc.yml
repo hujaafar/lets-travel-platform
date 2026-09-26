@@ -1,0 +1,20 @@
+jenkins:
+  systemMessage: "Travel Plan CI. Configure a dedicated build agent before running jobs."
+  numExecutors: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    globalMatrix:
+      entries:
+        - user:
+            name: "admin"
+            permissions: ["Overall/Administer"]
+  crumbIssuer:
+    standard: {}
+unclassified:
+  location:
+    url: "https://localhost:18443/"

@@ -1,0 +1,72 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: dashboard, namespace: travel-plan}
+spec:
+  minAvailable: 2
+  selector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: identity, namespace: travel-plan}
+spec:
+  minAvailable: 2
+  selector: {matchLabels: {app.kubernetes.io/name: identity}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: travel, namespace: travel-plan}
+spec:
+  minAvailable: 2
+  selector: {matchLabels: {app.kubernetes.io/name: travel}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: {name: payments, namespace: travel-plan}
+spec:
+  minAvailable: 2
+  selector: {matchLabels: {app.kubernetes.io/name: payments}}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: identity, namespace: travel-plan}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: identity}
+  minReplicas: 3
+  maxReplicas: 10
+  behavior:
+    scaleDown: {stabilizationWindowSeconds: 300}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 70}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: travel, namespace: travel-plan}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: travel}
+  minReplicas: 3
+  maxReplicas: 10
+  behavior:
+    scaleDown: {stabilizationWindowSeconds: 300}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 70}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: {name: payments, namespace: travel-plan}
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: payments}
+  minReplicas: 3
+  maxReplicas: 10
+  behavior:
+    scaleDown: {stabilizationWindowSeconds: 300}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 70}

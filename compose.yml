@@ -1,0 +1,230 @@
+name: travel-plan
+services:
+  postgres:
+    mem_limit: 256m
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: travelplan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/bootstrap.py}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    entrypoint: ["sh", "/bootstrap/entrypoint.sh"]
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./.secrets/certs/postgres:/certs:ro
+      - ./infra/postgres/entrypoint.sh:/bootstrap/entrypoint.sh:ro
+      - ./infra/postgres/pg_hba.conf:/bootstrap/pg_hba.conf:ro
+      - ./.secrets/000-roles.sql:/docker-entrypoint-initdb.d/000-roles.sql:ro
+      - ./infra/postgres/001-schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+      - ./infra/postgres/002-sample.sql:/docker-entrypoint-initdb.d/002-sample.sql:ro
+    healthcheck:
+      {
+        test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d travelplan"],
+        interval: 5s,
+        timeout: 3s,
+        retries: 30,
+      }
+    networks: [backend]
+    restart: unless-stopped
+  neo4j:
+    mem_limit: 768m
+    image: neo4j:5.26-community
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 384m
+      NEO4J_server_memory_pagecache_size: 128m
+      NEO4J_server_bolt_tls__level: REQUIRED
+      NEO4J_dbms_ssl_policy_bolt_enabled: "true"
+      NEO4J_dbms_ssl_policy_bolt_base__directory: /certificates
+      NEO4J_dbms_ssl_policy_bolt_private__key: tls.key
+      NEO4J_dbms_ssl_policy_bolt_public__certificate: tls.crt
+      NEO4J_dbms_ssl_policy_bolt_client__auth: NONE
+      NEO4J_server_http_enabled: "false"
+    volumes: [neo-data:/data, ./.secrets/certs/neo4j:/certificates:ro]
+    healthcheck:
+      test: ["CMD", "bash", "-c", ": > /dev/tcp/127.0.0.1/7687"]
+      interval: 10s
+      timeout: 3s
+      start_period: 90s
+      retries: 12
+    networks: [graph]
+    restart: unless-stopped
+  vault:
+    # A fresh Linux image can exceed 192 MB during Vault initialization.
+    mem_limit: 512m
+    environment: { GOMEMLIMIT: 384MiB, GOMAXPROCS: "2" }
+    image: hashicorp/vault:1.20
+    command: server
+    ports: ["127.0.0.1:18200:8200"]
+    volumes:
+      [
+        vault-raft-data:/vault/file,
+        ./infra/vault/vault.hcl:/vault/config/vault.hcl:ro,
+        ./.secrets/certs/vault:/certs:ro,
+      ]
+    cap_add: [IPC_LOCK]
+    networks: [backend, egress]
+    restart: unless-stopped
+  identity-agent:
+    image: hashicorp/vault:1.20
+    environment: { GOMEMLIMIT: 192MiB, GOMAXPROCS: "2" }
+    user: "0"
+    entrypoint: ["sh", "/config/agent-entrypoint.sh"]
+    command: agent -config=/config/identity-agent.hcl
+    healthcheck:
+      {
+        test: ["CMD-SHELL", "test -s /runtime/application.properties"],
+        interval: 5s,
+        timeout: 3s,
+        retries: 30,
+      }
+    mem_limit: 512m
+    volumes:
+      [
+        ./infra/vault:/config:ro,
+        ./.secrets/approle/identity:/approle:ro,
+        ./.secrets/certs/identity:/certs:ro,
+        identity-runtime:/runtime,
+      ]
+    networks: [backend]
+    depends_on: [vault]
+    restart: unless-stopped
+  travel-agent:
+    image: hashicorp/vault:1.20
+    environment: { GOMEMLIMIT: 192MiB, GOMAXPROCS: "2" }
+    user: "0"
+    entrypoint: ["sh", "/config/agent-entrypoint.sh"]
+    command: agent -config=/config/travel-agent.hcl
+    healthcheck:
+      {
+        test: ["CMD-SHELL", "test -s /runtime/application.properties"],
+        interval: 5s,
+        timeout: 3s,
+        retries: 30,
+      }
+    mem_limit: 512m
+    volumes:
+      [
+        ./infra/vault:/config:ro,
+        ./.secrets/approle/travel:/approle:ro,
+        ./.secrets/certs/travel:/certs:ro,
+        travel-runtime:/runtime,
+      ]
+    networks: [backend]
+    depends_on: [vault]
+    restart: unless-stopped
+  payments-agent:
+    image: hashicorp/vault:1.20
+    environment: { GOMEMLIMIT: 192MiB, GOMAXPROCS: "2" }
+    user: "0"
+    entrypoint: ["sh", "/config/agent-entrypoint.sh"]
+    command: agent -config=/config/payments-agent.hcl
+    healthcheck:
+      {
+        test: ["CMD-SHELL", "test -s /runtime/application.properties"],
+        interval: 5s,
+        timeout: 3s,
+        retries: 30,
+      }
+    mem_limit: 512m
+    volumes:
+      [
+        ./infra/vault:/config:ro,
+        ./.secrets/approle/payments:/approle:ro,
+        ./.secrets/certs/payments:/certs:ro,
+        payments-runtime:/runtime,
+      ]
+    networks: [backend, egress]
+    depends_on: [vault]
+    restart: unless-stopped
+  identity:
+    build:
+      {
+        context: .,
+        dockerfile: infra/Dockerfile.service,
+        args: { SERVICE: identity },
+      }
+    image: travel-plan-identity:1.0.0
+    environment:
+      { TLS_PASSWORD: "${TLS_PASSWORD}", APP_ORIGIN: "https://localhost:8443" }
+    volumes:
+      [identity-runtime:/run/secrets:ro, ./.secrets/certs/identity:/certs:ro]
+    depends_on:
+      {
+        postgres: { condition: service_healthy },
+        identity-agent: { condition: service_healthy },
+      }
+    networks: [backend]
+    deploy: { replicas: 2, resources: { limits: { memory: 384M } } }
+    restart: unless-stopped
+  travel:
+    build:
+      {
+        context: .,
+        dockerfile: infra/Dockerfile.service,
+        args: { SERVICE: travel },
+      }
+    image: travel-plan-travel:1.0.0
+    environment:
+      {
+        TLS_PASSWORD: "${TLS_PASSWORD}",
+        APP_ORIGIN: "https://localhost:8443",
+        APP_AUTH_URL: "https://dashboard:9444",
+      }
+    volumes: [travel-runtime:/run/secrets:ro, ./.secrets/certs/travel:/certs:ro]
+    depends_on:
+      {
+        postgres: { condition: service_healthy },
+        travel-agent: { condition: service_healthy },
+      }
+    networks: [backend, graph]
+    deploy: { replicas: 2, resources: { limits: { memory: 384M } } }
+    restart: unless-stopped
+  payments:
+    build:
+      {
+        context: .,
+        dockerfile: infra/Dockerfile.service,
+        args: { SERVICE: payments },
+      }
+    image: travel-plan-payments:1.0.0
+    environment:
+      {
+        TLS_PASSWORD: "${TLS_PASSWORD}",
+        APP_ORIGIN: "https://localhost:8443",
+        APP_AUTH_URL: "https://dashboard:9444",
+      }
+    volumes:
+      [payments-runtime:/run/secrets:ro, ./.secrets/certs/payments:/certs:ro]
+    depends_on:
+      {
+        postgres: { condition: service_healthy },
+        payments-agent: { condition: service_healthy },
+      }
+    networks: [backend, egress]
+    deploy: { replicas: 2, resources: { limits: { memory: 384M } } }
+    restart: unless-stopped
+  dashboard:
+    mem_limit: 96m
+    build: { context: ., dockerfile: infra/Dockerfile.dashboard }
+    image: travel-plan-dashboard:1.0.0
+    ports: ["127.0.0.1:8443:8443"]
+    volumes:
+      [
+        ./infra/Caddyfile:/etc/caddy/Caddyfile:ro,
+        ./.secrets/certs/dashboard:/certs:ro,
+      ]
+    networks: [backend, egress]
+    restart: unless-stopped
+networks:
+  backend: { internal: true }
+  graph: { internal: true }
+  egress: {}
+volumes:
+  pg-data: {}
+  neo-data: {}
+  vault-data: {}
+  vault-raft-data: {}
+  identity-runtime: {}
+  travel-runtime: {}
+  payments-runtime: {}

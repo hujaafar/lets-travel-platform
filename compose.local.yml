@@ -1,0 +1,11 @@
+# Laptop profile. The base deployment retains two replicas per Java service.
+services:
+  identity:
+    deploy:
+      replicas: 1
+  travel:
+    deploy:
+      replicas: 1
+  payments:
+    deploy:
+      replicas: 1

@@ -1,0 +1,29 @@
+# Build images from a fresh checkout without runtime secrets or service startup.
+# Image tags match compose.yml so trusted integration jobs can reuse these builds.
+services:
+  identity:
+    image: travel-plan-identity:1.0.0
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.service
+      args:
+        SERVICE: identity
+  travel:
+    image: travel-plan-travel:1.0.0
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.service
+      args:
+        SERVICE: travel
+  payments:
+    image: travel-plan-payments:1.0.0
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.service
+      args:
+        SERVICE: payments
+  dashboard:
+    image: travel-plan-dashboard:1.0.0
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.dashboard

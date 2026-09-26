@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-caddy
+  namespace: travel-plan
+data:
+  Caddyfile: |
+    {
+      admin off
+      auto_https off
+      servers { protocols h1 h2 }
+    }
+    https://:8443 {
+      tls /certs/tls.crt /certs/tls.key
+      encode zstd gzip
+      header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+      }
+      handle /api/auth/* {
+        reverse_proxy https://identity:8443 {
+          transport http {
+            tls_server_name identity
+            tls_trust_pool file /certs/ca.crt
+          }
+        }
+      }
+      handle /api/users* {
+        reverse_proxy https://identity:8443 {
+          transport http {
+            tls_server_name identity
+            tls_trust_pool file /certs/ca.crt
+          }
+        }
+      }
+      handle /api/travels* {
+        reverse_proxy https://travel:8443 {
+          transport http {
+            tls_server_name travel
+            tls_trust_pool file /certs/ca.crt
+          }
+        }
+      }
+      handle /api/payments* {
+        reverse_proxy https://payments:8443 {
+          transport http {
+            tls_server_name payments
+            tls_trust_pool file /certs/ca.crt
+          }
+        }
+      }
+      handle /api/* { respond "Not found" 404 }
+      handle {
+        root * /srv
+        try_files {path} /index.html
+        file_server
+      }
+      log {
+        output stdout
+        format json
+      }
+    }

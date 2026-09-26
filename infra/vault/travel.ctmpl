@@ -1,0 +1,3 @@
+{{ with secret "secret/data/travel" }}
+{{ range $k, $v := .Data.data }}{{ $k }}={{ $v }}
+{{ end }}{{ end }}

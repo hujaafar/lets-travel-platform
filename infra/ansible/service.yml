@@ -1,0 +1,39 @@
+---
+- name: Deploy or scale one Travel Plan microservice
+  hosts: travel_hosts
+  become: true
+  serial: 1
+  vars:
+    app_dir: /opt/travel-plan
+    replica_count: 2
+    build_image: true
+  pre_tasks:
+    - name: Validate the selected service and replica count
+      ansible.builtin.assert:
+        that:
+          - service_name is defined
+          - service_name in ['identity', 'travel', 'payments']
+          - replica_count | int >= 1
+          - replica_count | int <= 16
+          - app_dir is match('^/.+')
+          - app_dir not in ['/', '/home', '/opt', '/usr', '/var', '/tmp']
+        fail_msg: Choose identity, travel or payments, 1–16 replicas and an existing application directory.
+    - name: Verify the existing deployment has been bootstrapped
+      ansible.builtin.stat:
+        path: "{{ app_dir }}/.env"
+      register: deployment_env
+    - name: Require the existing deployment
+      ansible.builtin.assert:
+        that: deployment_env.stat.isreg | default(false)
+        fail_msg: Run deploy.yml first. Service-only deployment never initializes databases or credentials.
+  tasks:
+    - name: Build and deploy only the selected service
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        services: ["{{ service_name }}"]
+        dependencies: false
+        build: "{{ 'always' if build_image | bool else 'never' }}"
+        scale: "{{ {service_name: replica_count | int} }}"
+        state: present
+        wait: true
+        wait_timeout: 240
