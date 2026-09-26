@@ -44,6 +44,22 @@ export default function AlpineAscent() {
   const [chapter, setChapter] = useState(0);
   const [paused, setPaused] = useState(false);
   const [staticScene, setStaticScene] = useState(false);
+  const [allowMotion, setAllowMotion] = useState(() => {
+    try {
+      return localStorage.getItem("lt-ascent-motion") === "enabled";
+    } catch {
+      return false;
+    }
+  });
+  const [unavailable, setUnavailable] = useState(false);
+  const selectMotion = (enabled: boolean) => {
+    setAllowMotion(enabled);
+    try {
+      localStorage.setItem("lt-ascent-motion", enabled ? "enabled" : "system");
+    } catch {
+      /* The control still works when browser storage is unavailable. */
+    }
+  };
   const wake = useRef<() => void>(() => {});
   useEffect(() => {
     wake.current();
@@ -55,6 +71,9 @@ export default function AlpineAscent() {
     const surface = canvas.current;
     if (!el || !surface || !window.matchMedia) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const isReduced = () => reduced.matches && !allowMotion;
+    setStaticScene(isReduced());
+    setUnavailable(false);
     let world:
       ReturnType<typeof import("./ascentWorld").createAscentWorld> | undefined;
     let disposed = false,
@@ -78,13 +97,13 @@ export default function AlpineAscent() {
       );
       el.dataset.progress = motion.current.progress.toFixed(3);
       el.style.setProperty("--ascent", String(motion.current.progress));
-      if (!reduced.matches)
+      if (!isReduced())
         setChapter(Math.min(2, Math.round(motion.current.progress * 2)));
       start();
     };
     const draw = (now: number) => {
       frame = 0;
-      if (disposed || !world || !visible || document.hidden || reduced.matches)
+      if (disposed || !world || !visible || document.hidden || isReduced())
         return;
       const delta = Math.min((now - previous) / 1000, 0.05);
       previous = now;
@@ -100,14 +119,14 @@ export default function AlpineAscent() {
         frame = requestAnimationFrame(draw);
     };
     const start = () => {
-      if (!frame && world && visible && !document.hidden && !reduced.matches) {
+      if (!frame && world && visible && !document.hidden && !isReduced()) {
         previous = performance.now();
         frame = requestAnimationFrame(draw);
       }
     };
     wake.current = start;
     const load = async () => {
-      if (reduced.matches) {
+      if (isReduced()) {
         setStaticScene(true);
         return;
       }
@@ -119,13 +138,14 @@ export default function AlpineAscent() {
       } catch {
         if (!disposed) {
           setStaticScene(true);
+          setUnavailable(true);
           el.dataset.renderer = "poster";
         }
       }
     };
     const preference = () => {
-      setStaticScene(reduced.matches);
-      if (reduced.matches) {
+      setStaticScene(isReduced());
+      if (isReduced()) {
         cancelAnimationFrame(frame);
         frame = 0;
       } else if (world) start();
@@ -146,6 +166,7 @@ export default function AlpineAscent() {
       world?.dispose();
       world = undefined;
       setStaticScene(true);
+      setUnavailable(true);
       el.dataset.renderer = "poster";
     };
     const observer = new IntersectionObserver(([entry]) => {
@@ -178,7 +199,7 @@ export default function AlpineAscent() {
       reduced.removeEventListener("change", preference);
       world?.dispose();
     };
-  }, []);
+  }, [allowMotion]);
   const choose = (index: number) => {
     if (staticScene) {
       setChapter(index);
@@ -199,7 +220,7 @@ export default function AlpineAscent() {
   return (
     <section
       ref={root}
-      className={`lt-ascent ${staticScene ? "is-static" : ""}`}
+      className={`lt-ascent ${staticScene ? "is-static" : ""} ${allowMotion ? "has-motion" : ""}`}
       aria-label="The alpine ascent"
       data-chapter={chapter}
     >
@@ -246,18 +267,29 @@ export default function AlpineAscent() {
         </nav>
         <div className="lt-ascent-bottom">
           <span>OUT OF THE EVERYDAY. INTO THE EXTRAORDINARY.</span>
-          <button
-            onClick={() => setPaused(!paused)}
-            aria-pressed={paused}
-            disabled={staticScene}
-          >
-            {paused || staticScene ? <Play size={13} /> : <Pause size={13} />}
-            {staticScene
-              ? "Still view"
-              : paused
-                ? "Resume atmosphere"
-                : "Pause atmosphere"}
-          </button>
+          <div className="lt-ascent-controls">
+            {allowMotion && (
+              <button onClick={() => selectMotion(false)}>
+                Use system setting
+              </button>
+            )}
+            <button
+              onClick={() =>
+                staticScene ? selectMotion(true) : setPaused(!paused)
+              }
+              aria-pressed={paused}
+              disabled={unavailable}
+            >
+              {paused || staticScene ? <Play size={13} /> : <Pause size={13} />}
+              {staticScene
+                ? unavailable
+                  ? "Still view"
+                  : "Enable motion"
+                : paused
+                  ? "Resume atmosphere"
+                  : "Pause atmosphere"}
+            </button>
+          </div>
         </div>
       </div>
     </section>

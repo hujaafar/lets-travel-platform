@@ -290,17 +290,17 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lt-ascent {
+  .lt-ascent:not(.has-motion) {
     height: auto;
   }
-  .lt-ascent-stage {
+  .lt-ascent:not(.has-motion) .lt-ascent-stage {
     position: relative;
     top: 0;
   }
   .lt-ascent-copy {
     animation: none;
   }
-  .lt-ascent-canvas {
+  .lt-ascent:not(.has-motion) .lt-ascent-canvas {
     display: none;
   }
 }
@@ -319,5 +319,19 @@
   }
   .lt-app .lt-ascent[data-chapter="2"] h1 {
     font-size: clamp(48px, 12vw, 82px);
+  }
+}
+
+.lt-ascent-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+@media (max-width: 760px) {
+  .lt-ascent-controls {
+    gap: 4px;
+  }
+  .lt-ascent-controls button {
+    max-width: 100px;
   }
 }

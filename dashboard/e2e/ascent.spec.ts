@@ -121,3 +121,42 @@ for (const mode of ["reduced motion", "WebGL unavailable"] as const) {
     await expect(page.getByLabel("Search journeys")).toBeInViewport();
   });
 }
+
+test("explicit motion choice overrides reduced motion, persists and can be reset", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await signIn(page);
+  await page
+    .getByRole("button", { name: "Enable motion", exact: true })
+    .click();
+  await expect(page.locator(".lt-ascent")).toHaveClass(/has-motion/);
+  await expect(page.locator(".lt-ascent")).toHaveAttribute(
+    "data-renderer",
+    /webgl|poster/,
+  );
+  if (
+    (await page.locator(".lt-ascent").getAttribute("data-renderer")) === "webgl"
+  ) {
+    expect(
+      await page
+        .locator(".lt-ascent-canvas")
+        .evaluate((e) => getComputedStyle(e).display),
+    ).not.toBe("none");
+    expect(
+      await page
+        .locator(".lt-ascent-stage")
+        .evaluate((e) => getComputedStyle(e).position),
+    ).toBe("sticky");
+    await expect(
+      page.getByRole("button", { name: "Pause atmosphere" }),
+    ).toBeVisible();
+  }
+  await page.reload();
+  await expect(page.locator(".lt-ascent")).toHaveClass(/has-motion/);
+  await page.getByRole("button", { name: "Use system setting" }).click();
+  await expect(page.locator(".lt-ascent")).toHaveClass(/is-static/);
+  await expect(
+    page.getByRole("button", { name: "Enable motion", exact: true }),
+  ).toBeVisible();
+});
