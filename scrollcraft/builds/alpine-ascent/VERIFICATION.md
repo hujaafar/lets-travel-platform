@@ -13,3 +13,5 @@ Artifacts: work/verification/alpine-opening.png, alpine-crossing.png, alpine-hor
 The Three.js scene adds a lazy chunk of approximately 138 kB gzipped; the working application can load without it. No video encoding, remote model requests, generated image services or external fonts are needed at runtime.
 
 The in-app browser reports reduced motion. The explicit Enable motion control overrides it for this experience, remembers the choice locally, and can return to the system preference. This override and persistence are covered by a browser regression. Hardware failure still selects the poster.
+
+The first Sonar analysis exhausted its 480 MB Node heap while loading the expanded TypeScript graph. The isolated CI agent now allows 3 GB and the scanner 1536 MB. Quality-gate conditions and scan scope are unchanged. A separate Maven download failure is preserved in the run history.

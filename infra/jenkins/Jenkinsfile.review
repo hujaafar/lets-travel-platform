@@ -45,7 +45,7 @@ pipeline {
     stage('SonarQube review and quality gate') {
       steps {
         withCredentials([string(credentialsId: 'lets-travel-review-sonar', variable: 'SONAR_TOKEN')]) {
-          sh './mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=lets-travel-review -Dsonar.scanner.skipJreProvisioning=true -Dsonar.qualitygate.wait=true'
+          sh './mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=lets-travel-review -Dsonar.scanner.skipJreProvisioning=true -Dsonar.javascript.node.maxspace=1536 -Dsonar.qualitygate.wait=true'
         }
       }
     }
