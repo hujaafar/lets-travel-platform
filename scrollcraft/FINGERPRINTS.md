@@ -11,3 +11,5 @@
 Earlier rows are historical. Unified Atlas changes product continuity and motion policy; it retains the prior opening, scene sequence and closing mechanics. It is a revision, without a claim that four fingerprint dimensions changed.
 
 | Let’s Travel scenic route (platform revision) | Editorial working travel journal | Sticky role navigation and native page progress | Photographic depth with independent typography/contours | Searchable collection, pinned photographic scene, lateral manifesto, recommendations | Live journey actions and existing footer | Scroll wipes between actual bookable destinations while tracing their scenic route; selectors also work with reduced motion |
+
+| Alpine ascent (Let’s Travel revision) | Continuous 3D opening and working journal | Shared dark role navigation plus direct ascent rail | Original snow terrain, anchored rope, camera ascent and atmosphere | Valley → crossing → horizon → functional collection and destination scenes | Dark field-journal footer and live journey actions | Native scroll follows a physical alpine route, then rises above the ridge; no invented elevation measurements |

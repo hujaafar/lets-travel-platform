@@ -1,0 +1,323 @@
+/* The ascent is a single continuous camera move, followed by the working collection. */
+.lt-ascent {
+  height: 370svh;
+  position: relative;
+  --ascent: 0;
+  background: #13212e;
+}
+.lt-ascent-stage {
+  position: sticky;
+  top: 78px;
+  height: calc(100svh - 78px);
+  min-height: 600px;
+  overflow: hidden;
+  isolation: isolate;
+  color: #f1f5f7;
+}
+.lt-ascent-poster,
+.lt-ascent-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.lt-ascent-poster img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.lt-ascent-canvas {
+  opacity: 0;
+  transition: opacity 1s;
+}
+.lt-ascent[data-renderer="webgl"]:not(.is-static) .lt-ascent-canvas {
+  opacity: 1;
+}
+.lt-ascent-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #0c182bcc 0%, #0c182b66 35%, transparent 65%),
+    linear-gradient(0deg, #0a172bd6, transparent 24%);
+}
+.lt-ascent-top {
+  position: absolute;
+  top: 34px;
+  left: 4.5%;
+  right: 4.5%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 2;
+  font:
+    10px "Courier New",
+    monospace;
+  letter-spacing: 0.19em;
+  color: #f1f5f7;
+}
+.lt-ascent-top span {
+  background: #112233a6;
+  padding: 6px 9px;
+}
+.lt-ascent-copy {
+  position: absolute;
+  z-index: 2;
+  left: 4.5%;
+  bottom: 108px;
+  width: 72%;
+  animation: lt-ascent-enter 0.65s ease-out both;
+}
+.lt-ascent-chapter {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font:
+    11px "Courier New",
+    monospace;
+  margin-bottom: 23px !important;
+}
+.lt-app .lt-ascent h1 {
+  font-size: clamp(88px, 11.8vw, 178px);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: -0.07em;
+  text-wrap: initial;
+  margin-bottom: 30px;
+}
+.lt-ascent-description {
+  max-width: 360px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #e1e8f0;
+}
+.lt-ascent-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 36px;
+  border-bottom: 1px solid #f0f4f780;
+  padding: 16px 0 11px;
+  font-size: 12px;
+  margin-top: 15px;
+}
+.lt-ascent-action svg {
+  transition: transform 0.3s;
+}
+.lt-ascent-action:hover svg {
+  transform: translate(4px, -4px);
+}
+.lt-ascent-route {
+  position: absolute;
+  right: 4.5%;
+  top: 27%;
+  bottom: 25%;
+  width: 160px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+}
+.lt-ascent-route svg {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 65px;
+  overflow: visible;
+  pointer-events: none;
+}
+.lt-ascent-route path {
+  fill: none;
+  stroke: #fff5;
+  stroke-width: 1;
+}
+.lt-ascent-route path.lt-ascent-trace {
+  stroke: #f0b38b;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--ascent));
+}
+.lt-ascent-route button {
+  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 12px;
+  border: 0;
+  background: #102034b3;
+  border-radius: 2px;
+  color: #d4dfe8;
+  padding: 10px 9px;
+  font:
+    10px "Courier New",
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.lt-ascent-route button i {
+  height: 1px;
+  width: 12px;
+  background: currentColor;
+  transition: transform 0.4s;
+  transform-origin: right;
+}
+.lt-ascent-route button[aria-pressed="true"] {
+  color: #fff;
+}
+.lt-ascent-route button[aria-pressed="true"] i {
+  background: #f0b38b;
+  transform: scaleX(1.5);
+}
+.lt-ascent-bottom {
+  position: absolute;
+  z-index: 2;
+  bottom: 25px;
+  left: 4.5%;
+  right: 4.5%;
+  border-top: 1px solid #f0f5fa30;
+  padding-top: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font:
+    9px "Courier New",
+    monospace;
+  letter-spacing: 0.14em;
+}
+.lt-ascent-bottom button {
+  background: #102034ad;
+  border: 1px solid #ffffff50;
+  padding: 9px 12px;
+  color: #f3f6f8;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+.lt-ascent.is-static {
+  height: auto;
+}
+.lt-ascent.is-static .lt-ascent-stage {
+  position: relative;
+  top: 0;
+}
+.lt-ascent.is-static .lt-ascent-route {
+  display: none;
+}
+.lt-ascent.is-static .lt-ascent-bottom button {
+  opacity: 1;
+}
+@keyframes lt-ascent-enter {
+  from {
+    transform: translateY(18px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@media (max-width: 760px) {
+  .lt-ascent {
+    height: 290svh;
+  }
+  .lt-ascent-stage {
+    top: 109px;
+    height: calc(100svh - 109px);
+    min-height: 590px;
+  }
+  .lt-ascent-top {
+    top: 25px;
+    left: 6%;
+    right: 6%;
+    font-size: 8px;
+  }
+  .lt-ascent-top span + span {
+    display: none;
+  }
+  .lt-ascent-copy {
+    left: 6%;
+    bottom: 155px;
+    width: 88%;
+  }
+  .lt-app .lt-ascent h1 {
+    font-size: clamp(73px, 17vw, 112px);
+    margin-bottom: 25px;
+  }
+  .lt-ascent-chapter {
+    font-size: 9px;
+    margin-bottom: 20px !important;
+  }
+  .lt-ascent-description {
+    font-size: 13px;
+    max-width: 270px;
+  }
+  .lt-ascent-action {
+    font-size: 11px;
+    padding-top: 9px;
+  }
+  .lt-ascent-route {
+    top: auto;
+    bottom: 82px;
+    left: 6%;
+    right: 6%;
+    width: auto;
+    height: 43px;
+    flex-direction: row;
+  }
+  .lt-ascent-route svg {
+    display: none;
+  }
+  .lt-ascent-route button {
+    font-size: 8px;
+    padding: 10px 6px;
+    gap: 7px;
+  }
+  .lt-ascent-route button i {
+    width: 9px;
+  }
+  .lt-ascent-bottom {
+    left: 6%;
+    right: 6%;
+    bottom: 21px;
+    padding-top: 14px;
+  }
+  .lt-ascent-bottom > span {
+    font-size: 7px;
+    max-width: 150px;
+    line-height: 1.6;
+  }
+  .lt-ascent-bottom button {
+    font-size: 9px;
+    padding: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lt-ascent {
+    height: auto;
+  }
+  .lt-ascent-stage {
+    position: relative;
+    top: 0;
+  }
+  .lt-ascent-copy {
+    animation: none;
+  }
+  .lt-ascent-canvas {
+    display: none;
+  }
+}
+
+.lt-app .lt-ascent[data-chapter="2"] h1 {
+  font-size: clamp(76px, 9.4vw, 140px);
+}
+@media (max-width: 760px) {
+  .lt-ascent-stage::after {
+    background: linear-gradient(
+      0deg,
+      #081726f5 0%,
+      #0b1b2cb8 45%,
+      transparent 83%
+    );
+  }
+  .lt-app .lt-ascent[data-chapter="2"] h1 {
+    font-size: clamp(48px, 12vw, 82px);
+  }
+}
