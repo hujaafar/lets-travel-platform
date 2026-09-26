@@ -341,7 +341,13 @@ export default function Platform() {
     if (!user) return;
     let alive = true;
     setLoading(true);
-    api<Trip[]>("/explore?q=" + encodeURIComponent(search))
+    // This interest includes trips described by their activities, not only
+    // itineraries that happen to contain the literal word "culture".
+    const discoverySearch =
+      search.trim().toLowerCase() === "culture"
+        ? "culture city cities temple museum heritage medina"
+        : search;
+    api<Trip[]>("/explore?q=" + encodeURIComponent(discoverySearch))
       .then((r) => {
         if (alive) setTrips(r);
       })

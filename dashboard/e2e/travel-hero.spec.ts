@@ -95,6 +95,10 @@ test("travel interests filter real journeys and the all-journeys action restores
   await expect(
     page.getByRole("button", { name: "Culture", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#collection .lt-card")).toContainText([
+    /Bali/i,
+    /Japanese/i,
+  ]);
   await page.getByRole("button", { name: "All journeys", exact: true }).click();
   await expect(page.locator("#collection .lt-card")).toHaveCount(initial);
 });
