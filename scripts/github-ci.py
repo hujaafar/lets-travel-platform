@@ -22,8 +22,8 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / 'work/github-ci'
-PROJECT = 'travel-plan-review'
-JOB = 'travel-plan-github-review'
+PROJECT = 'lets-travel-review'
+JOB = 'lets-travel-github-review'
 PRIVATE = set()
 
 
@@ -113,7 +113,7 @@ def main():
     sonar.call('/api/users/change_password', {'login': 'admin', 'previousPassword': 'admin', 'password': password})
     # Do not retain a session established with the now-rotated default password.
     sonar = API('https://localhost:19443', password)
-    sonar.call('/api/projects/create', {'project': PROJECT, 'name': 'Travel Plan PR candidate', 'visibility': 'private'})
+    sonar.call('/api/projects/create', {'project': PROJECT, 'name': 'Let’s Travel PR candidate', 'visibility': 'private'})
     token = mask(sonar.json('/api/user_tokens/generate', {'name': 'candidate-analysis', 'type': 'PROJECT_ANALYSIS_TOKEN', 'projectKey': PROJECT})['token'])
     gate_name = 'Travel Plan candidate'
     source_gate = next(g['name'] for g in sonar.json('/api/qualitygates/list')['qualitygates'] if g['isDefault'])
@@ -133,10 +133,10 @@ import com.cloudbees.plugins.credentials.*
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl
 import hudson.util.Secret
 def j=Jenkins.get()
-def n=new DumbSlave('travel-plan-review','Disposable GitHub review; no Docker socket','/home/jenkins/agent','1',Node.Mode.EXCLUSIVE,'travel-plan-review',new JNLPLauncher(),new RetentionStrategy.Always(),[])
+def n=new DumbSlave('lets-travel-review','Disposable GitHub review; no Docker socket','/home/jenkins/agent','1',Node.Mode.EXCLUSIVE,'lets-travel-review',new JNLPLauncher(),new RetentionStrategy.Always(),[])
 j.addNode(n)
 def provider=SystemCredentialsProvider.getInstance()
-provider.credentials.add(new StringCredentialsImpl(CredentialsScope.GLOBAL,'travel-plan-review-sonar','Disposable project analysis only',Secret.fromString(TOKEN)))
+provider.credentials.add(new StringCredentialsImpl(CredentialsScope.GLOBAL,'lets-travel-review-sonar','Disposable project analysis only',Secret.fromString(TOKEN)))
 provider.save()
 println JsonOutput.toJson([secret:n.toComputer().getJnlpMac()])
 '''.replace('TOKEN', json.dumps(token))
@@ -149,7 +149,7 @@ println JsonOutput.toJson([secret:n.toComputer().getJnlpMac()])
     private_dir.mkdir(mode=0o700, exist_ok=True)
     environment = '\n'.join([
         'JENKINS_URL=https://jenkins:8443/', 'JENKINS_WEB_SOCKET=true',
-        'JENKINS_AGENT_NAME=travel-plan-review', 'JENKINS_SECRET=' + agent_secret,
+        'JENKINS_AGENT_NAME=lets-travel-review', 'JENKINS_SECRET=' + agent_secret,
         'JENKINS_JAVA_OPTS=-Xmx192m -Djavax.net.ssl.trustStore=/certs/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit',
         'MAVEN_OPTS=-Xmx384m -XX:ActiveProcessorCount=2 -Djavax.net.ssl.trustStore=/certs/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit',
     ]) + '\n'
@@ -159,11 +159,11 @@ println JsonOutput.toJson([secret:n.toComputer().getJnlpMac()])
     pipeline = (ROOT / 'infra/jenkins/Jenkinsfile.review').read_text()
     xml = '<flow-definition><description>GitHub PR candidate; isolated disposable runner.</description><keepDependencies>false</keepDependencies><properties/><definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"><script>' + escape(pipeline) + '</script><sandbox>true</sandbox></definition><triggers/><disabled>false</disabled></flow-definition>'
     jenkins.call('/createItem?name=' + JOB, xml.encode(), 'application/xml', crumb=True)
-    run('docker', 'run', '-d', '--name', 'travel-plan-github-agent', '--network', 'travel-plan_egress', '--memory=2g', '--cpus=2',
-        '--env-file', str(env_file), '-v', 'travel-plan_github-agent-home:/home/jenkins',
+    run('docker', 'run', '-d', '--name', 'lets-travel-github-agent', '--network', 'lets-travel_egress', '--memory=2g', '--cpus=2',
+        '--env-file', str(env_file), '-v', 'lets-travel_github-agent-home:/home/jenkins',
         '-v', str(ROOT / '.secrets/certs/tools/truststore.p12') + ':/certs/truststore.p12:ro',
-        '-v', str(ROOT / 'work/ci-review') + ':/review:ro', 'travel-plan-ci-agent:github')
-    wait_for('Jenkins agent', lambda: not jenkins.json('/computer/travel-plan-review/api/json')['offline'])
+        '-v', str(ROOT / 'work/ci-review') + ':/review:ro', 'lets-travel-ci-agent:github')
+    wait_for('Jenkins agent', lambda: not jenkins.json('/computer/lets-travel-review/api/json')['offline'])
     jenkins.call('/job/' + JOB + '/build', b'', crumb=True)
     wait_for('Jenkins build', lambda: bool(jenkins.json('/job/' + JOB + '/api/json?tree=lastBuild[number]')['lastBuild']), timeout=120)
     number = jenkins.json('/job/' + JOB + '/api/json?tree=lastBuild[number]')['lastBuild']['number']

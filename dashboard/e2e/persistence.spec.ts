@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8443";
+const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8444";
 test.skip(
   !["localhost", "127.0.0.1", "[::1]"].includes(new URL(origin).hostname),
   "Database fixtures require the local Compose deployment",

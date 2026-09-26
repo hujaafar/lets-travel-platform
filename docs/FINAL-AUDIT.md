@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Travel Plan — submission audit
 
 > Current rubric review: see [REQUIREMENTS-AUDIT.md](REQUIREMENTS-AUDIT.md). GitHub PRs through [PR #5](https://github.com/hujaafar/travel-plan/pull/5) are merged and synced to an identical source tree on the course Gitea repository. Measurements below the next paragraph are the September 17 historical snapshot; use the current PR run and completion handoff for final status.

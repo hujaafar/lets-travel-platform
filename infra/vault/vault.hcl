@@ -2,7 +2,7 @@ ui = true
 disable_mlock = true
 storage "raft" {
  path = "/vault/file"
- node_id = "travel-plan-vault"
+ node_id = "lets-travel-vault"
 }
 listener "tcp" {
  address = "0.0.0.0:8200"

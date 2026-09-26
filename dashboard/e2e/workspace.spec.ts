@@ -8,14 +8,14 @@ import fs from "node:fs";
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 
-const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8443";
+const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8444";
 const secretPath = path.resolve("../.secrets/bootstrap.json");
 const password =
   process.env.ADMIN_PASSWORD ||
   JSON.parse(fs.readFileSync(secretPath, "utf8")).ADMIN_PASSWORD;
 
 async function signIn(page: Page) {
-  await page.goto("/");
+  await page.goto("/admin");
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(

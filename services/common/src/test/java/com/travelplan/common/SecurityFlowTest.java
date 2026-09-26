@@ -52,10 +52,20 @@ class SecurityFlowTest {
 
   static java.util.stream.Stream<org.junit.jupiter.params.provider.Arguments> adminEndpoints() {
     return java.util.stream.Stream.of("ADMIN", "VIEWER", "TRAVEL_MANAGER", "UNKNOWN")
-        .flatMap(role -> java.util.stream.Stream.of("GET", "HEAD", "POST", "PUT", "DELETE")
-            .flatMap(method -> java.util.stream.Stream.of(
-                "/api/users", "/api/travels", "/api/travels/graph-status", "/api/payments")
-                .map(path -> org.junit.jupiter.params.provider.Arguments.of(role, method, path))));
+        .flatMap(
+            role ->
+                java.util.stream.Stream.of("GET", "HEAD", "POST", "PUT", "DELETE")
+                    .flatMap(
+                        method ->
+                            java.util.stream.Stream.of(
+                                    "/api/users",
+                                    "/api/travels",
+                                    "/api/travels/graph-status",
+                                    "/api/payments")
+                                .map(
+                                    path ->
+                                        org.junit.jupiter.params.provider.Arguments.of(
+                                            role, method, path))));
   }
 
   @org.junit.jupiter.params.ParameterizedTest

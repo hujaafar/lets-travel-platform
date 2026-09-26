@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # GitHub development and course delivery
 
 > Delivery update: the owner authorized a documented solo-maintainer merge exception on 17 September 2026. See [SOLO-MAINTAINER-DELIVERY.md](SOLO-MAINTAINER-DELIVERY.md). Approval and merge statements below are the earlier audit snapshot; use the linked PRs for actual current status.

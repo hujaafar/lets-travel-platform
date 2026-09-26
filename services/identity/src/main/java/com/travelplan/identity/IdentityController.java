@@ -27,6 +27,17 @@ public class IdentityController implements SessionVerifier {
 
   public record Login(@Email @NotBlank String email, @NotBlank @Size(max = 72) String password) {}
 
+  public record Registration(
+      @NotBlank @Size(max = 100) String name,
+      @Email @NotBlank @Size(max = 254) String email,
+      @NotBlank @Size(min = 12, max = 72) String password) {}
+
+  @PostMapping("/api/auth/register")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Map<String, Object> register(@Valid @RequestBody Registration input) {
+    return add(new UserInput(input.name(), input.email(), "TRAVELER", "ACTIVE", input.password()));
+  }
+
   public record UserInput(
       @NotBlank @Size(max = 100) String name,
       @Email @NotBlank @Size(max = 254) String email,
@@ -157,7 +168,7 @@ public class IdentityController implements SessionVerifier {
   }
 
   private void validate(UserInput u, boolean creating) {
-    if (!Set.of("ADMIN", "TRAVEL_MANAGER", "VIEWER").contains(u.role())
+    if (!Set.of("ADMIN", "TRAVEL_MANAGER", "TRAVELER", "VIEWER").contains(u.role())
         || !Set.of("ACTIVE", "SUSPENDED").contains(u.status()))
       throw new IllegalArgumentException("Invalid role or status");
     if ((creating || (u.password() != null && !u.password().isBlank()))

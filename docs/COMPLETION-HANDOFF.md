@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Completion handoff — 20 September 2026
 
 The application has three Java microservices, an Admin dashboard, PostgreSQL/Neo4j, Caddy, Vault, Ansible, Kubernetes readiness assets and PR-triggered Jenkins/Sonar plus real browser/API deployment checks. GitHub PR #5 and course Gitea PR #4 are merged with identical source trees; the required Jenkins/Sonar and live-deployment jobs passed.

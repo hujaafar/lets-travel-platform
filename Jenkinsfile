@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'travel-plan-build' }
+  agent { label 'lets-travel-build' }
   options {
     timestamps()
     disableConcurrentBuilds()
@@ -10,7 +10,7 @@ pipeline {
     booleanParam(name: 'DEPLOY_STAGING', defaultValue: false, description: 'Deploy an approved main build to the configured staging inventory')
   }
   environment {
-    SONAR_PROJECT = 'travel-plan'
+    SONAR_PROJECT = 'lets-travel'
   }
   stages {
     stage('Checkout') { steps { checkout scm } }
@@ -40,8 +40,8 @@ pipeline {
       // Community Build analyzes the main branch only. Keep PR results isolated.
       when { branch 'main' }
       steps {
-        withSonarQubeEnv('travel-plan-sonar') {
-          sh 'mvn -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=travel-plan'
+        withSonarQubeEnv('lets-travel-sonar') {
+          sh 'mvn -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=lets-travel'
         }
       }
     }
@@ -66,6 +66,8 @@ pipeline {
         sh 'python3 scripts/bootstrap.py'
         sh 'docker compose -f compose.yml -f compose.local.yml up -d --wait --wait-timeout 240'
         sh 'python3 scripts/verify-infrastructure.py'
+        sh 'python3 scripts/seed-platform.py'
+        sh 'python3 scripts/verify-platform.py'
         sh 'python3 scripts/verify-logging.py --service-logs-only --report work/verification/logging.json'
         dir('dashboard') {
           sh 'npx playwright install chromium firefox'
@@ -78,9 +80,9 @@ pipeline {
       when { allOf { branch 'main'; expression { params.DEPLOY_STAGING } } }
       input { message 'Deploy this tested main revision to staging?' }
       steps {
-        sh 'git archive --format=tar.gz --output=travel-plan-source.tar.gz HEAD'
-        sshagent(credentials: ['travel-plan-deploy']) {
-          sh 'ansible-playbook -i "$STAGING_INVENTORY" infra/ansible/deploy.yml -e artifact_path="$WORKSPACE/travel-plan-source.tar.gz"'
+        sh 'git archive --format=tar.gz --output=lets-travel-source.tar.gz HEAD'
+        sshagent(credentials: ['lets-travel-deploy']) {
+          sh 'ansible-playbook -i "$STAGING_INVENTORY" infra/ansible/deploy.yml -e artifact_path="$WORKSPACE/lets-travel-source.tar.gz"'
         }
       }
     }

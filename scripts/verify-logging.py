@@ -75,7 +75,7 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--project", default="travel-plan")
+    parser.add_argument("--project", default="lets-travel")
     parser.add_argument("--credentials", help="Private JSON with email/password, otherwise local bootstrap account")
     parser.add_argument("--service-logs-only", action="store_true", help="Explicitly skip Loki when monitoring is not running")
     parser.add_argument("--report", default="work/verification/logging.json")

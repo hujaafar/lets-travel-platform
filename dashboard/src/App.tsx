@@ -162,7 +162,7 @@ function Login({ onLogin }: { onLogin: (user: User) => void }) {
       <section className="login-story">
         <a className="brand" href="#sign-in">
           <img src="/mark.svg" alt="" />
-          travel<span>plan.</span>
+          let’s<span>travel.</span>
         </a>
         <div>
           <span className="eyebrow">THE WORLD, WELL PLANNED</span>
@@ -451,7 +451,7 @@ export default function App() {
           onClick={() => navigate("overview")}
         >
           <img src="/mark.svg" alt="" />
-          travel<span>plan.</span>
+          let’s<span>travel.</span>
         </a>
         <button
           className="workspace-switch"
@@ -488,6 +488,10 @@ export default function App() {
           ))}
         </nav>
         <div className="sidebar-bottom">
+          <a className="side-link" href="/">
+            {" "}
+            <Compass size={18} /> Traveler workspace
+          </a>
           <button
             aria-label="Settings"
             data-label="Settings"
@@ -1769,8 +1773,11 @@ function EditorModal({
             <div className="form-grid">
               <label>
                 Role
-                <select name="role" defaultValue={person?.role || "VIEWER"}>
-                  <option value="VIEWER">Viewer</option>
+                <select name="role" defaultValue={person?.role || "TRAVELER"}>
+                  <option value="TRAVELER">Traveler</option>
+                  <option value="VIEWER">
+                    Legacy viewer (no traveler access)
+                  </option>
                   <option value="TRAVEL_MANAGER">Travel manager</option>
                   <option value="ADMIN">Administrator</option>
                 </select>

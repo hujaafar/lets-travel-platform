@@ -2,7 +2,7 @@
 # Deployment is intentionally blocked until the operator supplies the license
 # acceptance value and a topology-appropriate storage class.
 neo4j:
-  name: travel-plan-graph
+  name: lets-travel-graph
   edition: enterprise
   acceptLicenseAgreement: "no"
   minimumClusterSize: 3

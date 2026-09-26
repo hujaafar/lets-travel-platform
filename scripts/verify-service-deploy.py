@@ -44,15 +44,15 @@ def run(args):
     report = {'passed': False, 'started_at': datetime.now(timezone.utc).isoformat(),
               'scope': 'Independent travel replica scaling and unchanged unrelated containers'}
     write_report(args.report, report)
-    original = len(running_replicas('travel-plan', 'travel'))
+    original = len(running_replicas('lets-travel', 'travel'))
     if original < 2:
         raise VerificationError('Start the two-replica stack first')
     try:
         baseline = container_state()
-        with AuthenticatedProbe('travel-plan') as probe:
+        with AuthenticatedProbe('lets-travel') as probe:
             try:
                 apply(args, original + 1, 'scale-up')
-                if len(running_replicas('travel-plan', 'travel')) != original + 1:
+                if len(running_replicas('lets-travel', 'travel')) != original + 1:
                     raise VerificationError('Travel did not reach the requested scale')
                 assert_unchanged(baseline, container_state(), 'travel')
                 if not all(probe.read(p).get('ok') for p in ('/api/auth/me', '/api/travels', '/api/payments')):
@@ -60,7 +60,7 @@ def run(args):
                 report['scale_up'] = True
             finally:
                 apply(args, original, 'restore')
-                report['original_replica_count_restored'] = len(running_replicas('travel-plan', 'travel')) == original
+                report['original_replica_count_restored'] = len(running_replicas('lets-travel', 'travel')) == original
             assert_unchanged(baseline, container_state(), 'travel')
             if not report['original_replica_count_restored']:
                 raise VerificationError('Original travel replica count was not restored')

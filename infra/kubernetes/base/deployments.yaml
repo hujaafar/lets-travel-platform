@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dashboard
-  namespace: travel-plan
+  namespace: lets-travel
 spec:
   replicas: 3
   selector:
@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: dashboard
-        app.kubernetes.io/part-of: travel-plan
+        app.kubernetes.io/part-of: lets-travel
     spec:
       serviceAccountName: dashboard
       automountServiceAccountToken: false
@@ -32,7 +32,7 @@ spec:
             matchLabels: {app.kubernetes.io/name: dashboard}
       containers:
         - name: dashboard
-          image: travel-plan-dashboard:1.0.0
+          image: lets-travel-dashboard:1.0.0
           imagePullPolicy: IfNotPresent
           ports:
             - {name: https, containerPort: 8443}
@@ -66,7 +66,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: identity
-  namespace: travel-plan
+  namespace: lets-travel
 spec:
   replicas: 3
   selector:
@@ -75,7 +75,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: identity
-        app.kubernetes.io/part-of: travel-plan
+        app.kubernetes.io/part-of: lets-travel
     spec:
       serviceAccountName: identity
       automountServiceAccountToken: false
@@ -95,7 +95,7 @@ spec:
             matchLabels: {app.kubernetes.io/name: identity}
       containers:
         - name: identity
-          image: travel-plan-identity:1.0.0
+          image: lets-travel-identity:1.0.0
           imagePullPolicy: IfNotPresent
           env:
             - {name: TLS_PASSWORD, valueFrom: {secretKeyRef: {name: identity-runtime, key: TLS_PASSWORD}}}
@@ -131,7 +131,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: travel
-  namespace: travel-plan
+  namespace: lets-travel
 spec:
   replicas: 3
   selector:
@@ -140,7 +140,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: travel
-        app.kubernetes.io/part-of: travel-plan
+        app.kubernetes.io/part-of: lets-travel
     spec:
       serviceAccountName: travel
       automountServiceAccountToken: false
@@ -160,12 +160,12 @@ spec:
             matchLabels: {app.kubernetes.io/name: travel}
       containers:
         - name: travel
-          image: travel-plan-travel:1.0.0
+          image: lets-travel-travel:1.0.0
           imagePullPolicy: IfNotPresent
           env:
             - {name: TLS_PASSWORD, valueFrom: {secretKeyRef: {name: travel-runtime, key: TLS_PASSWORD}}}
             - {name: APP_ORIGIN, value: "https://travel.example.com"}
-            - {name: APP_AUTH_URL, value: "https://identity.travel-plan.svc.cluster.local:8443"}
+            - {name: APP_AUTH_URL, value: "https://identity.lets-travel.svc.cluster.local:8443"}
           ports: [{name: https, containerPort: 8443}]
           readinessProbe:
             httpGet: {scheme: HTTPS, path: /actuator/health/readiness, port: https}
@@ -197,7 +197,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payments
-  namespace: travel-plan
+  namespace: lets-travel
 spec:
   replicas: 3
   selector:
@@ -206,7 +206,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: payments
-        app.kubernetes.io/part-of: travel-plan
+        app.kubernetes.io/part-of: lets-travel
     spec:
       serviceAccountName: payments
       automountServiceAccountToken: false
@@ -226,12 +226,12 @@ spec:
             matchLabels: {app.kubernetes.io/name: payments}
       containers:
         - name: payments
-          image: travel-plan-payments:1.0.0
+          image: lets-travel-payments:1.0.0
           imagePullPolicy: IfNotPresent
           env:
             - {name: TLS_PASSWORD, valueFrom: {secretKeyRef: {name: payments-runtime, key: TLS_PASSWORD}}}
             - {name: APP_ORIGIN, value: "https://travel.example.com"}
-            - {name: APP_AUTH_URL, value: "https://identity.travel-plan.svc.cluster.local:8443"}
+            - {name: APP_AUTH_URL, value: "https://identity.lets-travel.svc.cluster.local:8443"}
           ports: [{name: https, containerPort: 8443}]
           readinessProbe:
             httpGet: {scheme: HTTPS, path: /actuator/health/readiness, port: https}

@@ -86,6 +86,7 @@ def generate(directory: Path, password: str):
         "payments",
         "postgres",
         "neo4j",
+        "elasticsearch",
         "vault",
         "dashboard",
         "jenkins",

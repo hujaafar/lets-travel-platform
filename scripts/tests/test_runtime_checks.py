@@ -94,7 +94,7 @@ class PreflightTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as scratch:
             report = Path(scratch) / "report.json"
             report.write_text('{"passed":true}')
-            args = SimpleNamespace(run_failover=True, project="travel-plan", report=str(report))
+            args = SimpleNamespace(run_failover=True, project="lets-travel", report=str(report))
             with patch.object(module, "running_replicas", side_effect=runtime_checks.VerificationError("offline")):
                 with self.assertRaises(runtime_checks.VerificationError):
                     module.run(args)
@@ -107,7 +107,7 @@ class PreflightTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as scratch:
             report = Path(scratch) / "report.json"
             report.write_text('{"passed":true}')
-            args = SimpleNamespace(project="travel-plan", report=str(report), service_logs_only=False)
+            args = SimpleNamespace(project="lets-travel", report=str(report), service_logs_only=False)
             with patch.object(module, "running_replicas", return_value=[]):
                 with self.assertRaises(runtime_checks.VerificationError):
                     module.run(args)
@@ -129,7 +129,7 @@ class CleanupReportTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as scratch:
             report = Path(scratch) / "report.json"
-            args = SimpleNamespace(run_failover=True, project="travel-plan", report=str(report),
+            args = SimpleNamespace(run_failover=True, project="lets-travel", report=str(report),
                                    credentials=None, recovery_timeout=45)
             with (
                 patch.object(module, "running_replicas", return_value=["replica1", "replica2"]),
@@ -154,7 +154,7 @@ class CleanupReportTest(unittest.TestCase):
         module = verifier("verify-logging")
         with tempfile.TemporaryDirectory() as scratch:
             report = Path(scratch) / "report.json"
-            args = SimpleNamespace(project="travel-plan", report=str(report),
+            args = SimpleNamespace(project="lets-travel", report=str(report),
                                    service_logs_only=True, credentials=None)
             with (
                 patch.object(module, "service_logs", return_value="mocked logs"),

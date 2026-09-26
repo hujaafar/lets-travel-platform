@@ -31,7 +31,7 @@ const person: User = {
   id: "person",
   name: "Traveller",
   email: "person@example.test",
-  role: "VIEWER",
+  role: "TRAVELER",
 };
 const trip: Travel = {
   id: "trip",
@@ -165,7 +165,7 @@ test("creates a person with normalized values and refreshes after saving", async
       expect.objectContaining({
         name: "New Person",
         email: "new@example.test",
-        role: "VIEWER",
+        role: "TRAVELER",
         password: "LongTestPassword!42",
       }),
     ),

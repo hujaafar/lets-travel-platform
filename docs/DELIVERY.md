@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # CI, review and deployment
 
 > Delivery update: the owner authorized a documented solo-maintainer branch-protection policy on 17 September 2026, applied to both PR #1 and PR #2. See [SOLO-MAINTAINER-DELIVERY.md](SOLO-MAINTAINER-DELIVERY.md) for the current standing rules; earlier approval/merge statements below are superseded by the linked PRs.

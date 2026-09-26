@@ -18,7 +18,7 @@ def compose(files, environment_file, profiles=()):
     environment = os.environ.copy()
     for key in ("COMPOSE_FILE", "COMPOSE_PROJECT_NAME", "COMPOSE_PROFILES", "COMPOSE_ENV_FILES"):
         environment.pop(key, None)
-    for key in ("POSTGRES_PASSWORD", "NEO4J_PASSWORD", "TLS_PASSWORD", "JENKINS_ADMIN_PASSWORD", "SONAR_DB_PASSWORD", "GRAFANA_ADMIN_PASSWORD"):
+    for key in ("POSTGRES_PASSWORD", "NEO4J_PASSWORD", "TLS_PASSWORD", "JENKINS_ADMIN_PASSWORD", "SONAR_DB_PASSWORD", "GRAFANA_ADMIN_PASSWORD", "ELASTIC_PASSWORD"):
         environment[key] = "manifest-validation-only"
     arguments = ["docker", "compose", "--project-directory", str(ROOT), "--env-file", str(environment_file)]
     for file in files:

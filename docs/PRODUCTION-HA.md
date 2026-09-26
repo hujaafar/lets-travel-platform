@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Production HA and least-privilege deployment plan
 
 The local Compose environment proves application replication, request distribution and Java replica recovery. The Kubernetes assets extend the design to a real multi-node platform without claiming that one laptop supplies independent failure domains.

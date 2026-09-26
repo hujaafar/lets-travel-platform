@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Verification record — 17 September 2026
 
 > Current rubric review: see [REQUIREMENTS-AUDIT.md](REQUIREMENTS-AUDIT.md) and [PR #2](https://github.com/hujaafar/travel-plan/pull/2). Measurements below are the September 17 historical snapshot.

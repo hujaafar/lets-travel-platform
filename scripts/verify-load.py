@@ -153,7 +153,7 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-load', action='store_true')
-    parser.add_argument('--project', default='travel-plan')
+    parser.add_argument('--project', default='lets-travel')
     parser.add_argument('--credentials')
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--duration', type=int, default=20)
