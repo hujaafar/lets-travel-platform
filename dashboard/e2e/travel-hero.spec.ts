@@ -132,33 +132,7 @@ test("mobile has a natural-flow hero with no overlapping copy or horizontal over
   await expect(page.getByLabel("Search journeys")).toBeInViewport();
 });
 
-test("motion pauses the visit and leaves destination selection usable", async ({
-  page,
-}) => {
-  await signIn(page);
-  await page.getByRole("button", { name: "Pause motion", exact: true }).click();
-  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-off/);
-  expect(
-    await page
-      .locator(".lt-voyage-window img")
-      .evaluate((e) => getComputedStyle(e).animationName),
-  ).toBe("none");
-  expect(
-    await page
-      .locator(".lt-scenes-stage")
-      .evaluate((e) => getComputedStyle(e).position),
-  ).toBe("relative");
-  await expect(
-    page.getByRole("button", { name: "Enable motion", exact: true }),
-  ).toBeVisible();
-  const last = page.locator(".lt-scene-tabs button").last();
-  await last.click();
-  await expect(last).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Explore this journey" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-});
-
-test("motion starts on each visit and still offers an explicit pause under reduced-motion media", async ({
+test("motion stays enabled after reload with no toggle or stored pause preference", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -173,16 +147,12 @@ test("motion starts on each visit and still offers an explicit pause under reduc
       .first()
       .evaluate((e) => getComputedStyle(e).animationName),
   ).toBe("lt-postcard-hover");
-  await page.getByRole("button", { name: "Pause motion", exact: true }).click();
-  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-off/);
-  expect(
-    await page
-      .locator(".lt-postcard-satellite")
-      .first()
-      .evaluate((e) => getComputedStyle(e).animationName),
-  ).toBe("none");
-  await page.reload();
   await expect(
-    page.getByRole("button", { name: "Pause motion", exact: true }),
-  ).toBeVisible();
+    page.getByRole("button", { name: /Pause motion|Enable motion/ }),
+  ).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-on/);
+  await expect(
+    page.getByRole("button", { name: /Pause motion|Enable motion/ }),
+  ).toHaveCount(0);
 });

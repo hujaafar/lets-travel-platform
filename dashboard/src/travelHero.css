@@ -167,26 +167,6 @@
   font-weight: 500;
   margin-top: 3px;
 }
-.lt-voyage-controls {
-  position: absolute;
-  z-index: 4;
-  right: 3%;
-  bottom: 24px;
-  display: flex;
-  gap: 8px;
-}
-.lt-app .lt-voyage-controls button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 40px;
-  padding: 8px 12px;
-  border: 1px solid #d8e0d55c;
-  border-radius: 30px;
-  color: #f4f1e6;
-  background: #10241feb;
-  font-size: 11px;
-}
 .lt-travel-interests {
   position: absolute;
   left: 0;
@@ -346,10 +326,6 @@
     width: 70%;
     right: 12%;
     bottom: 115px;
-  }
-  .lt-voyage-controls {
-    right: 5%;
-    bottom: 5px;
   }
   .lt-travel-interests {
     position: relative;

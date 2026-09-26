@@ -29,7 +29,6 @@ import "./platform.css";
 import { useTravelMotion } from "./useTravelMotion";
 import JourneyScenes from "./JourneyScenes";
 import TravelHero from "./TravelHero";
-import { useMotionPreference } from "./useMotionPreference";
 
 type Person = {
   id: string;
@@ -255,7 +254,6 @@ function Card({
 }
 
 export default function Platform() {
-  const motion = useMotionPreference();
   const [user, setUser] = useState<Person | null>(null),
     [ready, setReady] = useState(false),
     [signup, setSignup] = useState(false);
@@ -456,7 +454,7 @@ export default function Platform() {
   useTravelMotion(
     motionRoot,
     `${Boolean(user)}-${page}-${trips.map((trip) => trip.id).join(",")}-${owned.length}-${bookings.length}-${revision}`,
-    motion.enabled,
+    true,
   );
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -630,10 +628,7 @@ export default function Platform() {
     );
   return (
     <ErrorContext.Provider value={error}>
-      <div
-        className={`lt-app ${motion.enabled ? "lt-motion-on" : "lt-motion-off"}`}
-        ref={motionRoot}
-      >
+      <div className="lt-app lt-motion-on" ref={motionRoot}>
         <div className="lt-scroll-progress" aria-hidden="true" />
         <a className="lt-skip" href="#content">
           Skip to content
@@ -711,13 +706,12 @@ export default function Platform() {
           {page === "discover" && (
             <>
               <TravelHero
-                motion={motion}
                 onExplore={(value) => {
                   setSearch(value);
                   setQuery(value);
                   const collection = document.getElementById("collection");
                   collection?.scrollIntoView({
-                    behavior: motion.enabled ? "smooth" : "instant",
+                    behavior: "smooth",
                     block: "start",
                   });
                   collection
@@ -810,11 +804,7 @@ export default function Platform() {
                   </div>
                 )}
               </section>
-              <JourneyScenes
-                trips={trips}
-                onOpen={open}
-                motionEnabled={motion.enabled}
-              />
+              <JourneyScenes trips={trips} onOpen={open} motionEnabled />
               <section className="lt-manifesto lt-reveal">
                 <span className="lt-eyebrow">THE WAY WE TRAVEL</span>
                 <h2>
