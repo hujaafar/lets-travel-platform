@@ -50,7 +50,7 @@ python scripts/verify-checkout.py
 
 The last two commands require owner sandbox credentials. `verify-checkout.py` enables sandbox gateways and creates/cancels real hosted checkout sessions without paying. `verify-platform.py` uses real services and marked database fixtures for completed-trip rules, removing its fixtures afterward. Neither represents a fixture as provider-settled money.
 
-See [phase-two status](docs/PHASE-TWO.md), [architecture/API](docs/PLATFORM.md) and [security boundaries](docs/PLATFORM-SECURITY.md). Other documents are marked phase-one references. Inherited Kubernetes manifests are examples, not the supported phase-two deployment path.
+See the [review demonstration](docs/DEMONSTRATION.md), [phase-two status](docs/PHASE-TWO.md), [architecture/API](docs/PLATFORM.md) and [security boundaries](docs/PLATFORM-SECURITY.md). Other documents are marked phase-one references. Inherited Kubernetes manifests are examples, not the supported phase-two deployment path.
 
 ## CI and collaboration
 

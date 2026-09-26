@@ -1,6 +1,6 @@
 # Phase-two status
 
-This covers **Let’s Travel**, not the phase-one Travel Plan submission. Final verification is in progress; this is not an “all passed” certificate.
+This covers **Let’s Travel**, not the phase-one Travel Plan submission. Implementation and verification are tracked in [GitHub PR #1](https://github.com/hujaafar/lets-travel/pull/1). Inspect the checks for the submitted revision and follow the [demonstration guide](DEMONSTRATION.md).
 
 | Requirement | Implementation |
 |---|---|
@@ -19,4 +19,4 @@ This covers **Let’s Travel**, not the phase-one Travel Plan submission. Final 
 
 Current evidence is generated in `work/verification/platform.json`, `providers.json`, `checkout.json`, `dashboard/playwright-report/` and Java `target/surefire-reports/`. Only successful current outputs are evidence. Payment completion fixtures are explicitly marked; checkout creation is not customer-approved settlement.
 
-Independent PR approval, production deployment, regulatory certification and customer-approved sandbox settlement must be reported separately. Optional PWA/multilingual features and inherited Kubernetes examples are not completion claims. Phase-one reference documents do not establish phase-two results.
+Independent PR approval, production deployment, regulatory certification and provider-specific sandbox settlement must be reported separately. Stripe test-card confirmation and refund were verified; complete PayPal test-buyer settlement remains unverified. Optional PWA/multilingual features and inherited Kubernetes examples are not completion claims. Phase-one reference documents do not establish phase-two results.
