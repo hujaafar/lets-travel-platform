@@ -1,7 +1,7 @@
 import type { Stop } from "./types";
 
 type Fields = Record<string, unknown>;
-const roles = ["ADMIN", "TRAVEL_MANAGER", "VIEWER"] as const;
+const roles = ["ADMIN", "TRAVEL_MANAGER", "TRAVELER", "VIEWER"] as const;
 const travelStatuses = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 const images = [
   "bali",

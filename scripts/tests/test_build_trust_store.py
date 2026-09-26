@@ -10,7 +10,7 @@ import unittest
 class BuildTrustStoreTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.directory = tempfile.TemporaryDirectory(prefix="travel-plan-build-trust-")
+        cls.directory = tempfile.TemporaryDirectory(prefix="lets-travel-build-trust-")
         cls.addClassCleanup(cls.directory.cleanup)
         cls.root = Path(cls.directory.name)
         assert cls.root.resolve().is_relative_to(Path(tempfile.gettempdir()).resolve())

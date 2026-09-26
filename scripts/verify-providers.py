@@ -50,7 +50,7 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--project', default='travel-plan')
+    parser.add_argument('--project', default='lets-travel')
     parser.add_argument('--credentials', help='Private JSON file with admin email/password; defaults to local bootstrap')
     parser.add_argument('--report', default='work/verification/providers.json')
     try:

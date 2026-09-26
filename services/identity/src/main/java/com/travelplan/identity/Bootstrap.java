@@ -35,6 +35,7 @@ public class Bootstrap implements ApplicationRunner {
               + " admin','admin@travelplan.local','ADMIN','ACTIVE',?)",
           new BCryptPasswordEncoder(12).encode(password));
     }
-    db.update("insert into identity.bootstrap_state(singleton) values (true) on conflict do nothing");
+    db.update(
+        "insert into identity.bootstrap_state(singleton) values (true) on conflict do nothing");
   }
 }

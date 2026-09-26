@@ -2,7 +2,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: travel-plan-postgres
+  name: lets-travel-postgres
   namespace: travel-data
 spec:
   instances: 3
@@ -23,7 +23,7 @@ spec:
   backup:
     retentionPolicy: 30d
     barmanObjectStore:
-      destinationPath: s3://REPLACE_ME/travel-plan/postgres
+      destinationPath: s3://REPLACE_ME/lets-travel/postgres
       endpointURL: https://REPLACE_ME
       s3Credentials:
         accessKeyId: {name: postgres-backup, key: ACCESS_KEY_ID}

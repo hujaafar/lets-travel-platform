@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import subprocess
+import time
 from process_runtime import run_command
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,7 +40,7 @@ for name in ['identity', 'travel', 'payments']:
     with urllib.request.urlopen('https://' + name + ':8443/actuator/health', context=ctx, timeout=15) as response:
         assert json.load(response)['status'] == 'UP', name
     print('PASS verified HTTPS and health: ' + name)
-request = urllib.request.Request('https://dashboard:8443/api/travels', headers={'Host': 'localhost:8443'})
+request = urllib.request.Request('https://dashboard:8444/api/travels', headers={'Host': 'localhost:8444'})
 try:
     urllib.request.urlopen(request, context=ctx, timeout=15)
     raise AssertionError('Anonymous API access was allowed')
@@ -48,8 +49,8 @@ except urllib.error.HTTPError as error:
     assert 'h3=' not in error.headers.get('Alt-Svc', ''), 'TCP-only ingress advertised an unreachable HTTP/3 endpoint'
 print('PASS gateway TLS and anonymous-access rejection')
 print('PASS TCP-only ingress does not advertise HTTP/3')
-for address, expected in [('https://dashboard:9444/internal/session', 401), ('https://dashboard:8443/internal/session', 404)]:
-    request = urllib.request.Request(address, data=b'{}', headers={'Host': 'dashboard:9444' if ':9444/' in address else 'localhost:8443', 'Content-Type': 'application/json'})
+for address, expected in [('https://dashboard:9444/internal/session', 401), ('https://dashboard:8444/internal/session', 404)]:
+    request = urllib.request.Request(address, data=b'{}', headers={'Host': 'dashboard:9444' if ':9444/' in address else 'localhost:8444', 'Content-Type': 'application/json'})
     try:
         urllib.request.urlopen(request, context=ctx, timeout=15)
         raise AssertionError('Internal session endpoint accepted anonymous access')
@@ -64,7 +65,7 @@ run(
         "--rm",
         "--memory=128m",
         "--network",
-        "travel-plan_backend",
+        "lets-travel_backend",
         "-v",
         str(ROOT / ".secrets" / "ca.crt") + ":/certs/ca.crt:ro",
         "python:3.13-alpine",
@@ -102,6 +103,11 @@ result = run(
     capture_output=True,
 )
 roles, owners, pending, travels = map(int, result.stdout.split())
+deadline = time.monotonic() + 30
+while pending and time.monotonic() < deadline:
+    time.sleep(1)
+    result = run(["docker", "compose", "exec", "-T", "postgres", "psql", "-At", "-v", "ON_ERROR_STOP=1", "-U", "postgres", "-d", "travelplan"], input=sql, capture_output=True)
+    roles, owners, pending, travels = map(int, result.stdout.split())
 assert (
     roles == owners == 3
 ), "Runtime roles must not own schemas or have administrative privileges"

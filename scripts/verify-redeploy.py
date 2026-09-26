@@ -38,7 +38,7 @@ def run(args):
               'scope': 'Ansible reapplication, business-data preservation and existing-session continuity'}
     write_report(args.report, report)
     try:
-        with AuthenticatedProbe('travel-plan') as probe:
+        with AuthenticatedProbe('lets-travel') as probe:
             if not probe.read('/api/auth/me').get('ok'):
                 raise VerificationError('Existing-session baseline failed')
             before = fingerprints()

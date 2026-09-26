@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Feature test map
 
 This map connects the phase-one features to executable tests. Unit tests cover application decisions and failure paths; JDBC/Neo4j mocks do not prove database constraints, network security or deployment availability. The final audit records which suites actually ran against the supplied revision.

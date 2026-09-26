@@ -37,7 +37,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     return r.getCookies() == null
         ? ""
         : Arrays.stream(r.getCookies())
-            .filter(c -> c.getName().equals("tp_session"))
+            .filter(c -> c.getName().equals("lt_session"))
             .map(Cookie::getValue)
             .findFirst()
             .orElse("");
@@ -72,7 +72,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         error(s, 403, "Untrusted request origin");
         return;
       }
-      if (path.equals("/api/auth/login")) {
+      if (path.equals("/api/auth/login") || path.equals("/api/auth/register")) {
         chain.doFilter(r, s);
         return;
       }
@@ -97,7 +97,23 @@ public class SecurityFilter extends OncePerRequestFilter {
         error(s, 403, "Invalid request token");
         return;
       }
-      if (!path.startsWith("/api/auth/") && !"ADMIN".equals(user.role())) {
+      boolean memberRoute =
+          List.of(
+                  "/api/explore",
+                  "/api/bookings",
+                  "/api/checkout",
+                  "/api/profile",
+                  "/api/feedback",
+                  "/api/reports",
+                  "/api/managers")
+              .stream()
+              .anyMatch(prefix -> path.equals(prefix) || path.startsWith(prefix + "/"));
+      boolean managerRoute = path.equals("/api/manage") || path.startsWith("/api/manage/");
+      boolean member = Set.of("ADMIN", "TRAVEL_MANAGER", "TRAVELER").contains(user.role());
+      if ((!path.startsWith("/api/auth/")
+          && !"ADMIN".equals(user.role())
+          && !(memberRoute && member)
+          && !(managerRoute && "TRAVEL_MANAGER".equals(user.role())))) {
         error(s, 403, "Administrator access is required");
         return;
       }

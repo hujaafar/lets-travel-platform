@@ -114,7 +114,7 @@ class IdentityFeatureTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     var cookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
     assertThat(cookie).contains("HttpOnly", "Secure", "SameSite=Strict", "Path=/", "Max-Age=28800");
-    var rawToken = cookie.substring("tp_session=".length(), cookie.indexOf(';'));
+    var rawToken = cookie.substring("lt_session=".length(), cookie.indexOf(';'));
     assertThat(rawToken).hasSize(43);
     assertThat(tokenHash.get())
         .isEqualTo(IdentityController.hash(rawToken))
@@ -196,11 +196,11 @@ class IdentityFeatureTest {
   @Test
   void logoutRevokesTheStoredSessionAndExpiresTheCookie() {
     var request = new MockHttpServletRequest();
-    request.setCookies(new Cookie("tp_session", "opaque-cookie"));
+    request.setCookies(new Cookie("lt_session", "opaque-cookie"));
     var response = controller.logout(request);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE))
-        .contains("tp_session=;", "Max-Age=0", "Secure", "HttpOnly", "SameSite=Strict");
+        .contains("lt_session=;", "Max-Age=0", "Secure", "HttpOnly", "SameSite=Strict");
     verify(db)
         .update(
             "delete from identity.sessions where token_hash=?",

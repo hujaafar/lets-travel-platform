@@ -38,7 +38,7 @@ def main():
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError) as error:
         print("Startup did not complete: " + type(error).__name__ + ". Data volumes were preserved.", file=sys.stderr)
         return 1
-    print("Ready: https://localhost:8443. Login details: .secrets/admin-login.txt")
+    print("Ready: https://localhost:8444. Login details: .secrets/admin-login.txt")
     return 0
 
 

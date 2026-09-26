@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Docker recovery and current operation
 
 17 September 2026. Docker Desktop 4.90.0 / Engine 29.7.2 is running. Travel Plan has two replicas of each Java service. The user explicitly allocated the shared runtime to Travel Plan and allowed Neo4flix to remain temporarily paused. CI and monitoring are staged according to the final handoff; data volumes are retained.

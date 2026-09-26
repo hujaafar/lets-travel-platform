@@ -8,14 +8,14 @@ import fs from "node:fs";
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 
-const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8443";
+const origin = process.env.TRAVEL_PLAN_URL || "https://localhost:8444";
 const secretPath = path.resolve("../.secrets/bootstrap.json");
 const password =
   process.env.ADMIN_PASSWORD ||
   JSON.parse(fs.readFileSync(secretPath, "utf8")).ADMIN_PASSWORD;
 
 async function signIn(page: Page) {
-  await page.goto("/");
+  await page.goto("/admin");
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(
@@ -359,11 +359,19 @@ test("API validates roles, CSRF, cascading deletes, stale edits, and revoked ses
         })
       ).status(),
     ).toBe(200);
-    expect(
-      (
-        await admin.post("/api/payments/" + gatewayId + "/test", { headers })
-      ).status(),
-    ).toBe(503);
+    const gateways = await (await admin.get("/api/payments")).json();
+    const configured = gateways.find(
+      (g: { id: string }) => g.id === gatewayId,
+    ).configured;
+    const providerTest = await admin.post(
+      "/api/payments/" + gatewayId + "/test",
+      { headers },
+    );
+    expect(providerTest.status()).toBe(configured ? 200 : 503);
+    if (configured)
+      expect((await providerTest.json()).message).toBe(
+        "Sandbox credentials verified",
+      );
     expect(
       (await admin.delete("/api/users/" + me.id, { headers })).status(),
     ).toBe(409);

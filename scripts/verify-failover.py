@@ -83,7 +83,7 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-failover", action="store_true", help="Explicitly authorize stopping/restoring one Java replica at a time")
-    parser.add_argument("--project", default="travel-plan")
+    parser.add_argument("--project", default="lets-travel")
     parser.add_argument("--credentials", help="Private JSON file with email/password; otherwise use local bootstrap credentials")
     parser.add_argument("--recovery-timeout", type=int, default=45)
     parser.add_argument("--report", default="work/verification/failover.json")

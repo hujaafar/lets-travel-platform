@@ -1,34 +1,34 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
-metadata: {name: dashboard, namespace: travel-plan}
+metadata: {name: dashboard, namespace: lets-travel}
 spec:
   minAvailable: 2
   selector: {matchLabels: {app.kubernetes.io/name: dashboard}}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
-metadata: {name: identity, namespace: travel-plan}
+metadata: {name: identity, namespace: lets-travel}
 spec:
   minAvailable: 2
   selector: {matchLabels: {app.kubernetes.io/name: identity}}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
-metadata: {name: travel, namespace: travel-plan}
+metadata: {name: travel, namespace: lets-travel}
 spec:
   minAvailable: 2
   selector: {matchLabels: {app.kubernetes.io/name: travel}}
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
-metadata: {name: payments, namespace: travel-plan}
+metadata: {name: payments, namespace: lets-travel}
 spec:
   minAvailable: 2
   selector: {matchLabels: {app.kubernetes.io/name: payments}}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: {name: identity, namespace: travel-plan}
+metadata: {name: identity, namespace: lets-travel}
 spec:
   scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: identity}
   minReplicas: 3
@@ -43,7 +43,7 @@ spec:
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: {name: travel, namespace: travel-plan}
+metadata: {name: travel, namespace: lets-travel}
 spec:
   scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: travel}
   minReplicas: 3
@@ -58,7 +58,7 @@ spec:
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: {name: payments, namespace: travel-plan}
+metadata: {name: payments, namespace: lets-travel}
 spec:
   scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: payments}
   minReplicas: 3

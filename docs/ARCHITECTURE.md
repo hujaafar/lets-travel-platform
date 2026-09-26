@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md) for current scope and checks.
+
 # Architecture and consistency
 
 ## Boundaries

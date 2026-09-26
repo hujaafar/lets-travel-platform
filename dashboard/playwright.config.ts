@@ -8,7 +8,7 @@ export default defineConfig({
   expect: { timeout: 10000 },
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: process.env.TRAVEL_PLAN_URL || "https://localhost:8443",
+    baseURL: process.env.TRAVEL_PLAN_URL || "https://localhost:8444",
     // Local development CA only. Service-to-service TLS is verified independently.
     ignoreHTTPSErrors: true,
     trace: "off",

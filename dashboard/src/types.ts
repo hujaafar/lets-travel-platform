@@ -2,7 +2,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "TRAVEL_MANAGER" | "VIEWER";
+  role: "ADMIN" | "TRAVEL_MANAGER" | "TRAVELER" | "VIEWER";
   status: string;
   created_at: string;
   csrf?: string;

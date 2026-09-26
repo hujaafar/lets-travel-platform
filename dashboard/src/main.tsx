@@ -7,14 +7,16 @@ import "@fontsource/dm-sans/latin-700.css";
 import "@fontsource/fraunces/latin-400.css";
 import "@fontsource/fraunces/latin-400-italic.css";
 
-import App from "./App";
-import "./style.css";
-import "./editorial.css";
-import "./kinetic.css";
-import "./orbit.css";
-import "./atlas.css";
+const App = React.lazy(() => import("./AdminEntry"));
+import Platform from "./Platform";
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <React.Suspense
+      fallback={
+        <div className="lt-app lt-loading">Opening your workspace…</div>
+      }
+    >
+      {window.location.pathname.startsWith("/admin") ? <App /> : <Platform />}
+    </React.Suspense>
   </React.StrictMode>,
 );

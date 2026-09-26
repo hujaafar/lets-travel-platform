@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   jenkins:
-    name: travel-plan/jenkins
+    name: lets-travel/jenkins
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -42,7 +42,7 @@ jobs:
       - name: Build Jenkins controller and isolated agent
         run: |
           docker compose -f compose.yml -f compose.tools.yml --profile tools build jenkins
-          docker build -f infra/jenkins/agent.Dockerfile -t travel-plan-ci-agent:github .
+          docker build -f infra/jenkins/agent.Dockerfile -t lets-travel-ci-agent:github .
       - name: Execute Jenkins pipeline and Sonar gate
         run: python scripts/github-ci.py
       - name: Diagnose failed CI startup
@@ -61,11 +61,11 @@ jobs:
       - name: Stop disposable CI services
         if: always()
         run: |
-          docker stop travel-plan-github-agent 2>/dev/null || true
+          docker stop lets-travel-github-agent 2>/dev/null || true
           docker compose -f compose.yml -f compose.tools.yml --profile tools stop
 
   integration:
-    name: travel-plan/live-tests
+    name: lets-travel/live-tests
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -88,6 +88,7 @@ jobs:
       - name: Deploy two replicas through Ansible on Ubuntu
         run: |
           set -o pipefail
+          sudo sysctl -w vm.max_map_count=524288
           python -m pip install -r scripts/requirements.txt ansible-core==2.19.0
           ansible-galaxy collection install -r infra/ansible/requirements.yml
           mkdir -p work/verification
@@ -97,6 +98,10 @@ jobs:
             --extra-vars '{"manage_system_packages":false,"replica_count":2}' \
             | tee work/verification/ansible-deploy.log
           docker compose -f compose.yml -f compose.tools.yml --profile monitoring up -d loki log-collector
+      - name: Verify phase-two role and discovery workflows
+        run: |
+          python scripts/seed-platform.py
+          python scripts/verify-platform.py
       - name: Verify internal TLS, database access and centralized logging
         run: |
           python scripts/verify-infrastructure.py

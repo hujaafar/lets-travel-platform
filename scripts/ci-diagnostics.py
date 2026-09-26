@@ -34,8 +34,8 @@ def main():
         result = subprocess.run(args, cwd=root, capture_output=True, text=True, timeout=30)
         return result.stdout + result.stderr
 
-    output = command('docker', 'ps', '-a', '--filter', 'label=com.docker.compose.project=travel-plan', '--format', '{{.Names}} {{.Status}}')
-    names = [line.split()[0] for line in output.splitlines() if line.startswith('travel-plan-')]
+    output = command('docker', 'ps', '-a', '--filter', 'label=com.docker.compose.project=lets-travel', '--format', '{{.Names}} {{.Status}}')
+    names = [line.split()[0] for line in output.splitlines() if line.startswith('lets-travel-')]
     for name in names:
         output += '\n### ' + name + '\n'
         output += command('docker', 'inspect', '--format', '{{json .State}}', name)

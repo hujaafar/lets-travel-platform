@@ -5,7 +5,7 @@
 Render and validate the base without a cluster:
 
 ```bash
-kubectl kustomize infra/kubernetes/base > work/travel-plan-kubernetes.yaml
+kubectl kustomize infra/kubernetes/base > work/lets-travel-kubernetes.yaml
 python scripts/verify-kubernetes.py
 ```
 

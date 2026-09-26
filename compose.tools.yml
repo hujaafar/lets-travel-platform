@@ -76,7 +76,7 @@ services:
   log-collector:
     profiles: [monitoring]
     build: { context: ./infra/observability }
-    environment: { COMPOSE_PROJECT: travel-plan }
+    environment: { COMPOSE_PROJECT: lets-travel }
     volumes:
       [
         /var/run/docker.sock:/var/run/docker.sock:ro,

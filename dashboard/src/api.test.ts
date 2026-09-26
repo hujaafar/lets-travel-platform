@@ -21,6 +21,12 @@ afterEach(() => {
 });
 
 describe("session expiration responses", () => {
+  it("does not display an expired-session warning on an anonymous first visit", async () => {
+    setCsrf("");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(unauthorized()));
+    await expect(api("/auth/me")).rejects.toThrow();
+    expect(dispatchEvent).not.toHaveBeenCalled();
+  });
   it("does not expire a new session when an old pending request returns 401", async () => {
     let finish!: (response: Response) => void;
     const fetch = vi.fn(

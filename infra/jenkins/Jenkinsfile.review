@@ -1,7 +1,7 @@
 // Explicit local source review on a dedicated container. This job has no Docker
 // daemon or application secrets; deployment/browser evidence is collected separately.
 pipeline {
-  agent { label 'travel-plan-review' }
+  agent { label 'lets-travel-review' }
   options { timestamps(); disableConcurrentBuilds(); timeout(time: 25, unit: 'MINUTES') }
   environment {
     // Bound forked test JVMs as well as Maven on the workstation review agent.
@@ -44,8 +44,8 @@ pipeline {
     }
     stage('SonarQube review and quality gate') {
       steps {
-        withCredentials([string(credentialsId: 'travel-plan-review-sonar', variable: 'SONAR_TOKEN')]) {
-          sh './mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=travel-plan-review -Dsonar.scanner.skipJreProvisioning=true -Dsonar.qualitygate.wait=true'
+        withCredentials([string(credentialsId: 'lets-travel-review-sonar', variable: 'SONAR_TOKEN')]) {
+          sh './mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar -Dsonar.projectKey=lets-travel-review -Dsonar.scanner.skipJreProvisioning=true -Dsonar.qualitygate.wait=true'
         }
       }
     }

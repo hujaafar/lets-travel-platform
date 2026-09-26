@@ -85,11 +85,11 @@ jar = http.cookiejar.CookieJar()
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), urllib.request.HTTPSHandler(context=ctx), urllib.request.HTTPCookieProcessor(jar))
 csrf = None
 def request(path, request_id, body=None):
-    headers = {'Host': 'localhost:8443', 'Origin': 'https://localhost:8443', 'X-Request-ID': request_id}
+    headers = {'Host': 'localhost:8444', 'Origin': 'https://localhost:8444', 'X-Request-ID': request_id}
     if body is not None:
         headers['Content-Type'] = 'application/json'
         if csrf: headers['X-CSRF-Token'] = csrf
-    req = urllib.request.Request('https://dashboard:8443' + path, headers=headers, data=None if body is None else json.dumps(body).encode())
+    req = urllib.request.Request('https://dashboard:8444' + path, headers=headers, data=None if body is None else json.dumps(body).encode())
     started = time.monotonic()
     with opener.open(req, timeout=8) as response:
         content = response.read()

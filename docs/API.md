@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md) for current scope and checks.
+
 # API reference
 
 Base URL: `https://localhost:8443/api`. Requests and responses use JSON. Mutations require the exact configured `Origin` and `X-CSRF-Token` from the authenticated session. `tp_session` is a Secure, HttpOnly, SameSite=Strict cookie. Never put passwords, cookies, or CSRF tokens into logs or query strings.

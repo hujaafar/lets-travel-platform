@@ -1,13 +1,13 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: default-deny, namespace: travel-plan}
+metadata: {name: default-deny, namespace: lets-travel}
 spec:
   podSelector: {}
   policyTypes: [Ingress, Egress]
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: allow-dns, namespace: travel-plan}
+metadata: {name: allow-dns, namespace: lets-travel}
 spec:
   podSelector: {}
   policyTypes: [Egress]
@@ -20,7 +20,7 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: dashboard-to-services, namespace: travel-plan}
+metadata: {name: dashboard-to-services, namespace: lets-travel}
 spec:
   podSelector:
     matchExpressions:
@@ -33,7 +33,7 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: service-egress, namespace: travel-plan}
+metadata: {name: service-egress, namespace: lets-travel}
 spec:
   podSelector:
     matchExpressions:
@@ -53,7 +53,7 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: travel-neo4j-egress, namespace: travel-plan}
+metadata: {name: travel-neo4j-egress, namespace: lets-travel}
 spec:
   # Neo4j Community has no native scoped-role support, so least privilege for
   # it is enforced at the network layer: only travel ever queries the graph,
@@ -67,7 +67,7 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: dashboard-egress, namespace: travel-plan}
+metadata: {name: dashboard-egress, namespace: lets-travel}
 spec:
   podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
   policyTypes: [Egress]
@@ -80,7 +80,7 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
-metadata: {name: allow-load-balancer, namespace: travel-plan}
+metadata: {name: allow-load-balancer, namespace: lets-travel}
 spec:
   podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
   policyTypes: [Ingress]

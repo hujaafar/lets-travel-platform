@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Assignment audit — 20 September 2026
 
 This audit checks the supplied Travel-Plan Part 1 rubric. **The project is not fully complete against the strict wording.** Source implementation, automated evidence and infrastructure/account prerequisites are different statuses.

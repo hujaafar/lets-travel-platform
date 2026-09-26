@@ -30,6 +30,7 @@ export async function api<T = void>(
       });
       if (
         response.status === 401 &&
+        Boolean(requestCsrf) &&
         !path.includes("login") &&
         requestCsrf === csrf
       )

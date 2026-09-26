@@ -4,7 +4,7 @@
   become: true
   serial: 1
   vars:
-    app_dir: /opt/travel-plan
+    app_dir: /opt/lets-travel
     source_dir: "{{ playbook_dir }}/../.."
     replica_count: 2
     deploy_tooling: false

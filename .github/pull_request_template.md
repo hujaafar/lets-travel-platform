@@ -2,8 +2,8 @@ Describe the problem and resulting behavior.
 
 Validation:
 
-- [ ] `travel-plan/jenkins` passed for this revision (Java, dashboard, provisioning, configuration and Sonar candidate analysis).
-- [ ] `travel-plan/live-tests` passed (container deployment, TLS, logging, Chrome/Firefox and replica recovery).
+- [ ] `lets-travel/jenkins` passed for this revision (Java, dashboard, provisioning, configuration and Sonar candidate analysis).
+- [ ] `lets-travel/live-tests` passed (container deployment, TLS, logging, Chrome/Firefox and replica recovery).
 - [ ] An independent person reviewed the source and approved this PR.
 - [ ] Runtime, schema and operational changes are documented.
 - [ ] No credentials or private deployment data are included.

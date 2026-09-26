@@ -1,3 +1,5 @@
+> Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
+
 # Solo-maintainer delivery policy
 
 On 17 September 2026 the owner authorized a documented solo-owner merge exception for PR #1, after being told that it does not fulfill the assignment's independent-review requirement. No teammate was available. On 19 September 2026, the same reasoning was applied a second time for PR #2, and the underlying branch-protection rule was changed from a per-merge exception into a **standing policy**: required approvals are set to 0 on both hosts' `main` branch rather than temporarily dropped and restored each time. This is owner authorization to merge verified work, not a peer approval. No second identity or approving bot was created, and none should be.

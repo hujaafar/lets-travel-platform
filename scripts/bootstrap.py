@@ -38,11 +38,11 @@ else:
     }
     state.write_text(json.dumps(config, indent=2))
     (S / "admin-login.txt").write_text(
-        "URL: https://localhost:8443\nEmail: admin@travelplan.local\nPassword: "
+        "URL: https://localhost:8444\nEmail: admin@travelplan.local\nPassword: "
         + config["ADMIN_PASSWORD"]
         + "\n"
     )
-for key in ["JENKINS_ADMIN_PASSWORD", "SONAR_DB_PASSWORD", "GRAFANA_ADMIN_PASSWORD"]:
+for key in ["JENKINS_ADMIN_PASSWORD", "SONAR_DB_PASSWORD", "GRAFANA_ADMIN_PASSWORD", "ELASTIC_PASSWORD"]:
     config.setdefault(key, secrets.token_hex(24))
 state.write_text(json.dumps(config, indent=2))
 (ROOT / ".env").write_text(
@@ -55,6 +55,7 @@ state.write_text(json.dumps(config, indent=2))
             "JENKINS_ADMIN_PASSWORD",
             "SONAR_DB_PASSWORD",
             "GRAFANA_ADMIN_PASSWORD",
+            "ELASTIC_PASSWORD",
         ]
     )
     + "\n"
@@ -89,7 +90,7 @@ run_command(
         "-d",
         "travelplan",
     ],
-    input=(ROOT / "infra/postgres/003-runtime-privileges.sql").read_bytes(),
+    input=(ROOT / "infra/postgres/004-platform.sql").read_bytes() + b"\n" + (ROOT / "infra/postgres/003-runtime-privileges.sql").read_bytes(),
     check=True,
     capture_output=True,
     timeout=30,
@@ -111,7 +112,7 @@ def api(path, data=None, token=None, method=None):
             "--memory=96m",
             "-i",
             "--network",
-            "travel-plan_backend",
+            "lets-travel_backend",
             "-v",
             str(S / "ca.crt") + ":/certs/ca.crt:ro",
             "python:3.13-alpine",
@@ -139,7 +140,7 @@ for i in range(60):
     try:
         initialized = api("sys/init")["initialized"]
         break
-    except (OSError, urllib.error.URLError):
+    except (OSError, urllib.error.URLError, subprocess.TimeoutExpired):
         time.sleep(1)
 else:
     raise SystemExit("Vault did not start")
@@ -204,4 +205,6 @@ for service in ["identity", "travel", "payments"]:
     )
 publish_runtime_exports(S)
 print("Bootstrap complete. Login details: .secrets/admin-login.txt")
+run_command(["docker", "compose", "up", "-d", "--no-build", "--wait", "--wait-timeout", "180", "elasticsearch"], check=True, timeout=210)
+run_command([os.sys.executable, "scripts/configure-search.py"], check=True, timeout=90)
 print("Run python scripts/start.py to build and wait for the local dashboard.")
