@@ -1,4 +1,5 @@
 import Overview from "./Overview";
+import TransactionLedger from "./TransactionLedger";
 import {
   useEffect,
   useRef,
@@ -961,6 +962,7 @@ export default function App() {
                     Test connection to verify them with the provider.
                   </p>
                 </div>
+                <TransactionLedger />
               </>
             )}
             {page === "calendar" && (

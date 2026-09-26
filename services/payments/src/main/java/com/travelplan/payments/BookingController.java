@@ -88,7 +88,7 @@ public class BookingController {
       log.warn("Booking {} awaits provider reconciliation: {}", id, e.getClass().getSimpleName());
     } finally {
       db.update(
-          "update payments.bookings set updated_at=now() where id=? and status in"
+          "update payments.bookings set updated_at=now() where id=? and not is_demo and status in"
               + " ('PENDING','CANCEL_REQUESTED')",
           id);
     }
@@ -98,8 +98,8 @@ public class BookingController {
   public void reconcile() {
     for (var id :
         db.queryForList(
-            "select id from payments.bookings where status in ('PENDING','CANCEL_REQUESTED') order"
-                + " by updated_at limit 25",
+            "select id from payments.bookings where not is_demo and status in"
+                + " ('PENDING','CANCEL_REQUESTED') order by updated_at limit 25",
             UUID.class)) safelyProcess(id);
   }
 }

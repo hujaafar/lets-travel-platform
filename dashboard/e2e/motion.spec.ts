@@ -80,10 +80,11 @@ test("mobile scene has usable controls and no horizontal overflow", async ({
   });
 });
 
-test("reduced motion keeps destination selection functional without a pinned scroll span", async ({
+test("paused motion keeps destination selection functional without a pinned scroll span", async ({
   page,
 }, info) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.getByRole("button", { name: "Pause motion", exact: true }).click();
   await page.locator(".lt-scenes").scrollIntoViewIfNeeded();
   const last = page.locator(".lt-scene-tabs button").last();
   await last.click();

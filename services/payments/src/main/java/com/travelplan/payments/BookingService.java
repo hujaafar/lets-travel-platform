@@ -45,7 +45,8 @@ public class BookingService {
       throw new ResponseStatusException(
           HttpStatus.CONFLICT, "The manager needs to set a price before checkout");
     if (db.queryForObject(
-            "select count(*) from payments.gateways where provider=? and currency=? and enabled",
+            "select count(*) from payments.gateways where provider=? and currency=? and"
+                + " enabled",
             Integer.class,
             provider,
             t.get("currency"))
@@ -55,11 +56,16 @@ public class BookingService {
     UUID userId = UUID.fromString(user.id());
     var existing =
         db.queryForList(
-            "select id,provider from payments.bookings where user_id=? and travel_id=? and status"
-                + " in ('PENDING','CONFIRMED','CANCEL_REQUESTED')",
+            "select id,provider,is_demo from payments.bookings where user_id=? and"
+                + " travel_id=? and status in"
+                + " ('PENDING','CONFIRMED','CANCEL_REQUESTED')",
             userId,
             trip);
     if (!existing.isEmpty()) {
+      if (Boolean.TRUE.equals(existing.get(0).get("is_demo")))
+        throw new ResponseStatusException(
+            HttpStatus.CONFLICT,
+            "This is a read-only demo booking. Choose another journey for sandbox" + " checkout.");
       if (!provider.equals(existing.get(0).get("provider")))
         throw new ResponseStatusException(
             HttpStatus.CONFLICT, "Cancel your existing booking before changing payment method");
@@ -90,8 +96,8 @@ public class BookingService {
   public void cancel(UUID id, SessionUser user) {
     var rows =
         db.queryForList(
-            "select b.*,t.manager_id,t.start_date from payments.bookings b join travel.travels t on"
-                + " t.id=b.travel_id where b.id=? for update of b",
+            "select b.*,t.manager_id,t.start_date from payments.bookings b join"
+                + " travel.travels t on t.id=b.travel_id where b.id=? for update of b",
             id);
     if (rows.isEmpty())
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found");
@@ -102,10 +108,14 @@ public class BookingService {
             && UUID.fromString(user.id()).equals(b.get("manager_id"))))
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN, "This booking is not yours to manage");
+    if (Boolean.TRUE.equals(b.get("is_demo")))
+      throw new ResponseStatusException(
+          HttpStatus.CONFLICT, "Demo bookings are read-only examples. No provider payment exists.");
     if (Set.of("CANCELLED", "REFUNDED", "CANCEL_REQUESTED").contains(b.get("status"))) return;
     cutoff(((java.sql.Date) b.get("start_date")).toLocalDate(), Instant.now());
     db.update(
-        "update payments.bookings set status='CANCEL_REQUESTED',updated_at=now() where id=?", id);
+        "update payments.bookings set status='CANCEL_REQUESTED',updated_at=now() where" + " id=?",
+        id);
   }
 
   @Transactional
@@ -113,6 +123,8 @@ public class BookingService {
     var rows = db.queryForList("select * from payments.bookings where id=? for update", id);
     if (rows.isEmpty()) return;
     var b = rows.get(0);
+    // Fixtures never create, inspect, capture or refund a provider payment.
+    if (Boolean.TRUE.equals(b.get("is_demo"))) return;
     String state = b.get("status").toString();
     if (!Set.of("PENDING", "CANCEL_REQUESTED").contains(state)) return;
     boolean expired =
@@ -122,7 +134,8 @@ public class BookingService {
       // The stable ID and stored expiry make retries identical after a crash.
       var hosted = gateway.create(b);
       db.update(
-          "update payments.bookings set provider_id=?,checkout_url=?,updated_at=now() where id=?",
+          "update payments.bookings set provider_id=?,checkout_url=?,updated_at=now()"
+              + " where id=?",
           hosted.id(),
           hosted.url(),
           id);
@@ -140,7 +153,7 @@ public class BookingService {
         if (refund.isBlank()) {
           refund = gateway.refund(b, result.capture());
           db.update(
-              "update payments.bookings set refund_id=?,status='CANCEL_REQUESTED' where id=?",
+              "update payments.bookings set refund_id=?,status='CANCEL_REQUESTED'" + " where id=?",
               refund,
               id);
         }
@@ -156,12 +169,13 @@ public class BookingService {
           id);
     } else if (result.paid()) {
       db.update(
-          "update payments.bookings set status='CONFIRMED',capture_id=?,updated_at=now() where"
-              + " id=?",
+          "update payments.bookings set status='CONFIRMED',capture_id=?,updated_at=now()"
+              + " where id=?",
           result.capture(),
           id);
       db.update(
-          "insert into travel.participants(travel_id,user_id) values (?,?) on conflict do nothing",
+          "insert into travel.participants(travel_id,user_id) values (?,?) on conflict do"
+              + " nothing",
           b.get("travel_id"),
           b.get("user_id"));
     } else if (result.expired())

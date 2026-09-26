@@ -132,7 +132,7 @@ test("mobile has a natural-flow hero with no overlapping copy or horizontal over
   await expect(page.getByLabel("Search journeys")).toBeInViewport();
 });
 
-test("motion pause persists and leaves all destination selection usable", async ({
+test("motion pauses the visit and leaves destination selection usable", async ({
   page,
 }) => {
   await signIn(page);
@@ -148,7 +148,6 @@ test("motion pause persists and leaves all destination selection usable", async 
       .locator(".lt-scenes-stage")
       .evaluate((e) => getComputedStyle(e).position),
   ).toBe("relative");
-  await page.reload();
   await expect(
     page.getByRole("button", { name: "Enable motion", exact: true }),
   ).toBeVisible();
@@ -159,38 +158,31 @@ test("motion pause persists and leaves all destination selection usable", async 
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
-test("system reduced motion defaults to a complete static scene and supports an explicit override", async ({
+test("motion starts on each visit and still offers an explicit pause under reduced-motion media", async ({
   page,
-}, info) => {
+}) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() =>
+    localStorage.setItem("lt-travel-motion", "paused"),
+  );
   await signIn(page);
-  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-off/);
-  expect(
-    await page
-      .locator(".lt-voyage-stage")
-      .evaluate((e) => getComputedStyle(e).position),
-  ).toBe("relative");
-  expect(
-    await page
-      .locator(".lt-voyage-window img")
-      .evaluate((e) => (e as HTMLImageElement).naturalWidth),
-  ).toBeGreaterThan(0);
-  await page.screenshot({
-    path: `../work/verification/${info.project.name}-travel-reduced.png`,
-  });
-  await page
-    .getByRole("button", { name: "Enable motion", exact: true })
-    .click();
   await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-on/);
   expect(
     await page
-      .locator(".lt-voyage-stage")
-      .evaluate((e) => getComputedStyle(e).position),
-  ).toBe("sticky");
+      .locator(".lt-postcard-satellite")
+      .first()
+      .evaluate((e) => getComputedStyle(e).animationName),
+  ).toBe("lt-postcard-hover");
+  await page.getByRole("button", { name: "Pause motion", exact: true }).click();
+  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-off/);
+  expect(
+    await page
+      .locator(".lt-postcard-satellite")
+      .first()
+      .evaluate((e) => getComputedStyle(e).animationName),
+  ).toBe("none");
   await page.reload();
   await expect(
     page.getByRole("button", { name: "Pause motion", exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Use system setting" }).click();
-  await expect(page.locator(".lt-app")).toHaveClass(/lt-motion-off/);
 });

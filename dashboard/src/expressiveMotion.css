@@ -1,0 +1,208 @@
+.lt-voyage {
+  --pointer-x: 0;
+  --pointer-y: 0;
+  perspective: 1600px;
+}
+.lt-voyage-window img {
+  animation-duration: 12s;
+  translate: calc(var(--pointer-x) * -7px) calc(var(--pointer-y) * -5px);
+}
+.lt-postcard,
+.lt-postcard-satellite {
+  animation: lt-postcard-hover 6s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.lt-voyage.in-view:not(.is-hidden) .lt-postcard,
+.lt-voyage.in-view:not(.is-hidden) .lt-postcard-satellite {
+  animation-play-state: running;
+}
+.lt-postcard {
+  transform: translate(
+      calc(var(--journey) * 25px + var(--pointer-x) * 10px),
+      calc(var(--journey) * -50px + var(--pointer-y) * 7px)
+    )
+    rotate(calc(7deg - var(--journey) * 12deg));
+}
+.lt-postcard-satellite {
+  position: absolute;
+  width: clamp(155px, 14vw, 210px);
+  background: #f4efdf;
+  border: 0;
+  padding: 8px;
+  bottom: 15%;
+  right: 9%;
+  z-index: 2;
+  box-shadow: 0 18px 45px #05181366;
+  text-align: left;
+  transform-origin: center;
+  cursor: pointer;
+}
+.lt-postcard-satellite img {
+  width: 100%;
+  height: clamp(155px, 15vw, 220px);
+  object-fit: cover;
+  display: block;
+}
+.lt-postcard-satellite > span {
+  display: block;
+  color: #20362b;
+  padding: 10px 4px 3px;
+  font-size: 10px;
+}
+.lt-postcard-satellite strong {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: 3px;
+}
+.satellite-greece {
+  transform: translate(
+      calc(-80px - var(--journey) * 190px + var(--pointer-x) * 15px),
+      calc(-20px - var(--journey) * 90px + var(--pointer-y) * 10px)
+    )
+    rotate(calc(-12deg - var(--journey) * 6deg));
+  animation-delay: -2s;
+}
+.satellite-japan {
+  transform: translate(
+      calc(5px + var(--journey) * 10px + var(--pointer-x) * 7px),
+      calc(-90px - var(--journey) * 235px + var(--pointer-y) * 7px)
+    )
+    rotate(calc(13deg - var(--journey) * 8deg));
+  animation-delay: -4s;
+}
+.lt-postcard-satellite:hover,
+.lt-postcard-satellite:focus-visible,
+.lt-postcard:hover,
+.lt-postcard:focus-visible {
+  animation-play-state: paused !important;
+  z-index: 5;
+}
+.lt-voyage-route {
+  width: 49%;
+  right: 5%;
+  bottom: 17%;
+}
+.lt-route-aircraft {
+  offset-path: path("M20 205C160 225 40 25 240 55S435 235 575 25");
+  offset-rotate: auto;
+  offset-distance: 10%;
+  animation: lt-route-flight 14s ease-in-out infinite paused;
+}
+.lt-voyage.in-view:not(.is-hidden) .lt-route-aircraft {
+  animation-play-state: running;
+}
+.lt-app.lt-motion-on .lt-scene-photo img {
+  transform: scale(calc(var(--photo-scale, 1.12) + 0.06))
+    translateX(calc((var(--scene-progress, 0) - 0.5) * -4%));
+}
+.lt-app.lt-motion-on .lt-motion-visible .lt-card-image img {
+  animation: lt-card-breathe 15s ease-in-out alternate infinite;
+}
+.lt-app.lt-motion-on .lt-card:hover .lt-card-image img,
+.lt-app.lt-motion-on .lt-card:focus-within .lt-card-image img {
+  animation-play-state: paused;
+}
+.lt-card:nth-child(2n) .lt-card-image img {
+  animation-delay: -5s;
+}
+.lt-card:nth-child(3n) .lt-card-image img {
+  animation-delay: -9s;
+}
+@keyframes lt-postcard-hover {
+  from,
+  25% {
+    translate: 0 0;
+  }
+  75%,
+  to {
+    translate: 0 -13px;
+  }
+}
+@keyframes lt-route-flight {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+@keyframes lt-card-breathe {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.055;
+  }
+}
+@media (min-width: 761px) and (max-width: 1199px) {
+  .lt-postcard-satellite {
+    width: 150px;
+    right: 7%;
+  }
+  .satellite-greece {
+    transform: translate(
+        calc(-45px - var(--journey) * 95px),
+        calc(-10px - var(--journey) * 40px)
+      )
+      rotate(-12deg);
+  }
+  .satellite-japan {
+    transform: translate(0, calc(-80px - var(--journey) * 185px)) rotate(12deg);
+  }
+}
+@media (max-width: 760px) {
+  .lt-postcard-satellite {
+    width: 112px;
+    bottom: 95px;
+    right: 12%;
+    padding: 6px;
+  }
+  .lt-postcard-satellite img {
+    height: 132px;
+  }
+  .lt-postcard-satellite strong {
+    font-size: 11px;
+  }
+  .lt-postcard-satellite > span {
+    font-size: 8px;
+  }
+  .satellite-greece {
+    transform: translate(
+        calc(-90px - var(--journey) * 9px),
+        calc(-15px - var(--journey) * 18px)
+      )
+      rotate(-12deg);
+  }
+  .satellite-japan {
+    transform: translate(0, calc(-110px - var(--journey) * 12px)) rotate(12deg);
+  }
+  .lt-postcard {
+    transform: translateY(calc(var(--journey) * -35px))
+      rotate(calc(7deg - var(--journey) * 8deg));
+  }
+  .lt-voyage-route {
+    width: 85%;
+    bottom: 145px;
+    right: 5%;
+  }
+}
+.lt-motion-off .lt-postcard,
+.lt-motion-off .lt-postcard-satellite,
+.lt-motion-off .lt-route-aircraft {
+  animation: none !important;
+}
+.lt-motion-off .lt-postcard,
+.lt-motion-off .lt-postcard-satellite,
+.lt-motion-off .lt-voyage-window img {
+  translate: none;
+}
+.lt-motion-off .lt-route-aircraft {
+  offset-distance: 55%;
+}

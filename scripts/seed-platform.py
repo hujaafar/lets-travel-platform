@@ -6,6 +6,10 @@ import secrets
 import subprocess
 
 def main():
+    import argparse
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--rich',action='store_true',help='Add clearly labeled, read-only demo booking history and fictional people')
+    args=parser.parse_args()
     api=admin()
     file=ROOT/'.secrets/demo-accounts.json'
     accounts=json.loads(file.read_text()) if file.exists() else {
@@ -33,6 +37,10 @@ def main():
             'status':'PUBLISHED','price':price,'capacity':12,'description':'A thoughtfully paced small-group journey, with time for local stories and unexpected discoveries.',
             'stops':[{'destination':dest,'country':country,'activities':activity,'accommodation':stay,'transportation':transport}],'participantIds':[],'version':0},201)
     print('Demo accounts and journeys ready. Private login details: .secrets/demo-login.txt')
-    print('No payments or traveler reviews were fabricated.')
+    if args.rich:
+        from demo_dataset import seed_rich
+        seed_rich(api,accounts,ROOT)
+    else:
+        print('No payment or review examples added. Use --rich for labeled demo activity.')
 
 if __name__=='__main__':main()

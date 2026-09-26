@@ -91,9 +91,9 @@ public class PlatformController {
     row.put(
         "feedback",
         db.queryForList(
-            "select f.rating,f.comment,f.created_at,coalesce(p.name,'Former traveler') as name from"
-                + " travel.feedback f left join identity.public_profiles p on p.id=f.user_id where"
-                + " travel_id=? order by f.created_at desc limit 100",
+            "select f.rating,f.comment,f.created_at,f.is_demo,coalesce(p.name,'Former traveler') as"
+                + " name from travel.feedback f left join identity.public_profiles p on"
+                + " p.id=f.user_id where travel_id=? order by f.created_at desc limit 100",
             row.get("id")));
   }
 
@@ -203,11 +203,11 @@ public class PlatformController {
   public Object subscribers(@PathVariable UUID id, @RequestAttribute("user") SessionUser user) {
     own(id, user);
     return db.queryForList(
-        "select b.id,b.user_id,p.name,b.status,b.created_at,(select count(*) from payments.bookings"
-            + " h join travel.travels t on t.id=h.travel_id where h.user_id=b.user_id and"
-            + " h.status='CONFIRMED' and t.end_date<current_date) as past_trips from"
-            + " payments.bookings b left join identity.public_profiles p on p.id=b.user_id where"
-            + " b.travel_id=? order by b.created_at desc",
+        "select b.id,b.user_id,p.name,b.status,b.is_demo,b.created_at,(select count(*) from"
+            + " payments.bookings h join travel.travels t on t.id=h.travel_id where"
+            + " h.user_id=b.user_id and h.status='CONFIRMED' and t.end_date<current_date) as"
+            + " past_trips from payments.bookings b left join identity.public_profiles p on"
+            + " p.id=b.user_id where b.travel_id=? order by b.created_at desc",
         id);
   }
 
@@ -310,7 +310,7 @@ public class PlatformController {
     row.put(
         "ratings",
         db.queryForList(
-            "select t.title,f.rating,f.comment,f.created_at from travel.feedback f join"
+            "select t.title,f.rating,f.comment,f.created_at,f.is_demo from travel.feedback f join"
                 + " travel.travels t on t.id=f.travel_id where t.manager_id=? order by f.created_at"
                 + " desc limit 100",
             id));
@@ -327,6 +327,12 @@ public class PlatformController {
   public Object profile(@RequestAttribute("user") SessionUser user) {
     UUID id = uid(user);
     return Map.of(
+        "has_demo",
+        Boolean.TRUE.equals(
+            db.queryForObject(
+                "select exists(select 1 from payments.bookings where user_id=? and is_demo)",
+                Boolean.class,
+                id)),
         "past_trips",
         db.queryForObject(
             "select count(*) from payments.bookings b join travel.travels t on t.id=b.travel_id"
@@ -388,6 +394,20 @@ public class PlatformController {
                     + " rating from identity.public_profiles p where p.role in"
                     + " ('ADMIN','TRAVEL_MANAGER')) x order by score desc")
             : List.of();
-    return Map.of("monthly", monthly, "trips", trips, "managers", managers);
+    return Map.of(
+        "monthly",
+        monthly,
+        "trips",
+        trips,
+        "managers",
+        managers,
+        "has_demo",
+        Boolean.TRUE.equals(
+            db.queryForObject(
+                "select exists(select 1 from payments.bookings b join travel.travels t on"
+                    + " t.id=b.travel_id where b.is_demo and (t.manager_id=? or ?))",
+                Boolean.class,
+                id,
+                all)));
   }
 }
