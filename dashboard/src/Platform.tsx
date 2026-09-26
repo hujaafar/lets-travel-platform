@@ -25,6 +25,9 @@ import {
 } from "lucide-react";
 import { api, setCsrf } from "./api";
 import "./platform.css";
+import "./travelMotion.css";
+import { useTravelMotion } from "./useTravelMotion";
+import JourneyScenes from "./JourneyScenes";
 
 type Person = {
   id: string;
@@ -434,27 +437,11 @@ export default function Platform() {
       });
     }
   }, [user]);
-  useEffect(() => {
-    if (!user) return;
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) e.target.classList.add("lt-visible");
-        }),
-      { threshold: 0.08 },
-    );
-    document.querySelectorAll(".lt-reveal").forEach((e) => observer.observe(e));
-    return () => observer.disconnect();
-  }, [user, page, trips, revision]);
-  useEffect(() => {
-    const update = () =>
-      document.documentElement.style.setProperty(
-        "--lt-scroll",
-        String(window.scrollY),
-      );
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, []);
+  const motionRoot = useRef<HTMLDivElement>(null);
+  useTravelMotion(
+    motionRoot,
+    `${Boolean(user)}-${page}-${trips.map((trip) => trip.id).join(",")}-${owned.length}-${bookings.length}-${revision}`,
+  );
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -629,7 +616,8 @@ export default function Platform() {
     );
   return (
     <ErrorContext.Provider value={error}>
-      <div className="lt-app">
+      <div className="lt-app" ref={motionRoot}>
+        <div className="lt-scroll-progress" aria-hidden="true" />
         <a className="lt-skip" href="#content">
           Skip to content
         </a>
@@ -702,12 +690,17 @@ export default function Platform() {
             </button>
           </div>
         )}
-        <main id="content">
+        <main id="content" key={page}>
           {page === "discover" && (
             <>
               <section className="lt-hero">
                 <div className="lt-hero-image" />
                 <div className="lt-hero-shade" />
+                <div className="lt-hero-contours" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </div>
                 <div className="lt-hero-copy">
                   <span className="lt-eyebrow">
                     <span className="lt-live-dot" /> THE WORLD IS STILL FULL OF
@@ -729,8 +722,8 @@ export default function Platform() {
                   </a>
                 </div>
                 <div className="lt-hero-foot">
-                  <span>01 / THE ART OF GETTING LOST</span>
-                  <span>SCROLL TO FIND YOUR WAY ↓</span>
+                  <span>THE ART OF GETTING LOST</span>
+                  <span>SMALL GROUPS. BIG PERSPECTIVES.</span>
                   <span>DOLOMITES, ITALY &nbsp; ↗</span>
                 </div>
                 <div className="lt-orbit" aria-hidden="true">
@@ -833,6 +826,7 @@ export default function Platform() {
                   </div>
                 )}
               </section>
+              <JourneyScenes trips={trips} onOpen={open} />
               <section className="lt-manifesto lt-reveal">
                 <span className="lt-eyebrow">THE WAY WE TRAVEL</span>
                 <h2>
@@ -845,8 +839,8 @@ export default function Platform() {
                 <div>
                   <p>
                     Travel should feel personal. Our managers bring their own
-                    perspective to every itinerary—from the first morning coffee
-                    to the last winding trail.
+                    perspective to every itinerary, from the first morning
+                    coffee to the last winding trail.
                   </p>
                   <a href="#personal" className="lt-text-button">
                     A journey for you <ArrowDown />

@@ -4,4 +4,11 @@ import "./editorial.css";
 import "./kinetic.css";
 import "./orbit.css";
 import "./atlas.css";
-export default App;
+import "./travelMotion.css";
+export default function AdminEntry() {
+  return (
+    <div className="lt-admin-motion">
+      <App />
+    </div>
+  );
+}
