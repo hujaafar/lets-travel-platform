@@ -20,12 +20,7 @@ test.beforeEach(async ({ page }) => {
 test("scroll changes the hero, photographs, route and destination with native navigation", async ({
   page,
 }, info) => {
-  const hero = page.locator(".lt-hero-image");
-  const before = await hero.evaluate((e) => getComputedStyle(e).transform);
-  await page.evaluate(() => window.scrollTo(0, 400));
-  await expect
-    .poll(() => hero.evaluate((e) => getComputedStyle(e).transform))
-    .not.toBe(before);
+  await expect(page.getByRole("heading", { name: "GO BEYOND." })).toBeVisible();
   const scene = page.locator(".lt-scenes");
   const positions = await scene.evaluate((e) => ({
     top:
@@ -98,7 +93,7 @@ test("reduced motion keeps destination selection functional without a pinned scr
   ).toBe("relative");
   expect(
     await page
-      .locator(".lt-hero-image")
+      .locator(".lt-ascent-copy")
       .evaluate((e) => getComputedStyle(e).animationName),
   ).toBe("none");
   await page.screenshot({

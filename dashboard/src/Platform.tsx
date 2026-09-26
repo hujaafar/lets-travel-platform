@@ -24,10 +24,11 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { api, setCsrf } from "./api";
-import "./platform.css";
 import "./travelMotion.css";
+import "./platform.css";
 import { useTravelMotion } from "./useTravelMotion";
 import JourneyScenes from "./JourneyScenes";
+import AlpineAscent from "./AlpineAscent";
 
 type Person = {
   id: string;
@@ -533,7 +534,7 @@ export default function Platform() {
             </p>
           </div>
           <span className="lt-coordinate">
-            46°29′54″N &nbsp; 11°51′08″E — THE DOLOMITES
+            THE GREAT OUTSIDE / LET’S TRAVEL
           </span>
         </div>
         <main className="lt-auth-form">
@@ -693,44 +694,7 @@ export default function Platform() {
         <main id="content" key={page}>
           {page === "discover" && (
             <>
-              <section className="lt-hero">
-                <div className="lt-hero-image" />
-                <div className="lt-hero-shade" />
-                <div className="lt-hero-contours" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </div>
-                <div className="lt-hero-copy">
-                  <span className="lt-eyebrow">
-                    <span className="lt-live-dot" /> THE WORLD IS STILL FULL OF
-                    FIRSTS
-                  </span>
-                  <h1>
-                    Less ordinary.
-                    <br />
-                    <em>More alive.</em>
-                  </h1>
-                  <p>
-                    Find the places that stay with you.
-                    <br />
-                    And the people who make them matter.
-                  </p>
-                  <a href="#collection" className="lt-button lt-button-light">
-                    Find your next journey
-                    <ArrowUpRight size={19} />
-                  </a>
-                </div>
-                <div className="lt-hero-foot">
-                  <span>THE ART OF GETTING LOST</span>
-                  <span>SMALL GROUPS. BIG PERSPECTIVES.</span>
-                  <span>DOLOMITES, ITALY &nbsp; ↗</span>
-                </div>
-                <div className="lt-orbit" aria-hidden="true">
-                  <span>GO A LITTLE FURTHER • GO A LITTLE FURTHER • </span>
-                  <Compass size={39} />
-                </div>
-              </section>
+              <AlpineAscent />
               <div className="lt-marquee" aria-hidden="true">
                 <div>
                   {Array.from({ length: 4 }, (_, i) => (
@@ -1329,7 +1293,7 @@ export default function Platform() {
             />
             <div className="lt-modal-content">
               <span className="lt-eyebrow">
-                {date(selected.start_date)} — {date(selected.end_date)}
+                {date(selected.start_date)} to {date(selected.end_date)}
               </span>
               <h2>{selected.title}</h2>
               <p>{selected.description}</p>

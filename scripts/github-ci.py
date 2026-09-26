@@ -159,7 +159,7 @@ println JsonOutput.toJson([secret:n.toComputer().getJnlpMac()])
     pipeline = (ROOT / 'infra/jenkins/Jenkinsfile.review').read_text()
     xml = '<flow-definition><description>GitHub PR candidate; isolated disposable runner.</description><keepDependencies>false</keepDependencies><properties/><definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"><script>' + escape(pipeline) + '</script><sandbox>true</sandbox></definition><triggers/><disabled>false</disabled></flow-definition>'
     jenkins.call('/createItem?name=' + JOB, xml.encode(), 'application/xml', crumb=True)
-    run('docker', 'run', '-d', '--name', 'lets-travel-github-agent', '--network', 'lets-travel_egress', '--memory=2g', '--cpus=2',
+    run('docker', 'run', '-d', '--name', 'lets-travel-github-agent', '--network', 'lets-travel_egress', '--memory=3g', '--cpus=2',
         '--env-file', str(env_file), '-v', 'lets-travel_github-agent-home:/home/jenkins',
         '-v', str(ROOT / '.secrets/certs/tools/truststore.p12') + ':/certs/truststore.p12:ro',
         '-v', str(ROOT / 'work/ci-review') + ':/review:ro', 'lets-travel-ci-agent:github')

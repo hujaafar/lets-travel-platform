@@ -18,7 +18,7 @@ for (const role of ["traveler", "manager"]) {
       .fill(demo[role].password);
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(
-      page.getByRole("heading", { name: "Less ordinary. More alive." }),
+      page.getByRole("heading", { name: "GO BEYOND." }),
     ).toBeVisible();
     await expect(page.locator(".lt-card").first()).toBeVisible();
     await expect(page.getByText(/NaN/)).toHaveCount(0);
