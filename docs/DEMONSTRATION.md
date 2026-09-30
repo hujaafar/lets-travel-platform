@@ -2,9 +2,9 @@
 
 ## Start and sign in
 
-Run `python scripts/start.py --replicas 2`, then `python scripts/seed-platform.py`. Open https://localhost:8444. The administrator login is generated in `.secrets/admin-login.txt`; the fictional manager and traveler logins are in `.secrets/demo-login.txt`. Those local files must never be published. Use the generated development CA, not disabled TLS verification.
+Run `python scripts/start.py --replicas 2`, then `python scripts/seed-platform.py --rich`. Open https://localhost:8444. The administrator login is generated in `.secrets/admin-login.txt`; the fictional manager and traveler logins are in `.secrets/demo-login.txt`. Those local files must never be published. Use the generated development CA, not disabled TLS verification.
 
-The original Travel Plan repository and its Docker volumes are separate. On a laptop with 4 GB assigned to Docker, stop the other project before starting this one; do not delete its volumes. Jenkins/Sonar and full browser checks run on separate disposable GitHub runners.
+The original Travel Plan Docker project and its volumes are separate. This portfolio copy retains the Let’s Travel Compose project name and port, so it must not be started alongside the older Let’s Travel checkout. Keep each deployment's matching secrets and data volumes together. On a laptop with 4 GB assigned to Docker, stop other stacks first; do not delete their volumes. Jenkins/Sonar and full browser checks run on separate disposable GitHub runners.
 
 ## Show the roles
 
@@ -30,6 +30,6 @@ Bookings/cancellations close three days before departure at 00:00 UTC; new check
 
 The GitHub PR has two checks: `lets-travel/jenkins` runs the actual Jenkins pipeline and SonarQube gate; `lets-travel/live-tests` provisions with Ansible and exercises the real services, Chrome, Firefox, accessibility, restart safety, failover and concurrent load. Inspect the check status and attached artifacts for the commit you are submitting.
 
-Local results are written beneath `work/verification/`, Maven `target/surefire-reports/`, and `dashboard/playwright-report/`. They are generated outputs, not checked-in pass certificates. The current Java suite has 204 tests; the React suite has 89. Windows skips five POSIX-only Python checks; Linux CI runs them. Firefox runs in Linux CI because this Windows installation refused to launch Playwright's Firefox binary.
+Local results are written beneath `work/verification/`, Maven `target/surefire-reports/`, and `dashboard/playwright-report/`. They are generated outputs, not checked-in pass certificates. Use the current run's reports for test counts. Windows skips POSIX-only Python checks; Linux CI runs them. Firefox runs in Linux CI because the development Windows installation refused to launch Playwright's Firefox binary.
 
 Optional PWA and translations are not implemented. Production HA, managed TLS, legal/compliance review, retention operations and independent human PR approval are not claimed by passing automated tests.

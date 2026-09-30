@@ -1,10 +1,12 @@
+> Archived phase-one README. Use the [portfolio README](../README.md) for the combined application and current setup. Old CI references below are historical.
+
 # Travel Plan
 
-Development and PR checks now run in the [GitHub working repository](https://github.com/hujaafar/travel-plan). The [course Gitea repository](https://learn.reboot01.com/git/hujaafar/travel-plan) is the final delivery destination. See [GitHub workflow and sync policy](docs/GITHUB-WORKFLOW.md).
+Development and PR checks now run in the [GitHub working repository](HISTORY.md#travel-plan). The [course Gitea repository](https://learn.reboot01.com/git/hujaafar/travel-plan) is the final delivery destination. See [GitHub workflow and sync policy](GITHUB-WORKFLOW.md).
 
 A Java microservices project with a working travel administration dashboard. Built for the first phase of the Travel-Plan assignment: environment, user management, itineraries, payment-method administration, security, and delivery tooling.
 
-**Requirement audit (20 September):** The final application and Kubernetes-readiness revision passed [Jenkins/Sonar and live deployment checks](https://github.com/hujaafar/travel-plan/actions/runs/35501746141), including safe Ansible reapplication, independent service scaling, browser tests, failover and concurrent load distribution. Owner Stripe and PayPal sandbox checks also pass locally through the protected Admin API with credentials held in Vault. Kubernetes and multi-node HA assets are provided under `infra/kubernetes`; a real production certification still requires independent nodes, a licensed Neo4j cluster and a second human reviewer.
+**Requirement audit (20 September):** The final application and Kubernetes-readiness revision passed [Jenkins/Sonar and live deployment checks](HISTORY.md#travel-plan), including safe Ansible reapplication, independent service scaling, browser tests, failover and concurrent load distribution. Owner Stripe and PayPal sandbox checks also pass locally through the protected Admin API with credentials held in Vault. Kubernetes and multi-node HA assets are provided under `infra/kubernetes`; a real production certification still requires independent nodes, a licensed Neo4j cluster and a second human reviewer.
 
 Unified Atlas carries the requested Scroll Craft design through one consistent product: an Earth-to-destination opening, expanding departure photograph, drawn route, independent ticket, itinerary spread, dimensional gallery and orbital close, followed by administration pages using the same ink, ivory and copper palette. Shared headings, buttons, tables, forms, calendar, settings, help and login follow the same visual system. Native scrolling controls the scenes; mobile uses a swipeable gallery. Motion is always enabled at the user's explicit request, including when an old off choice is stored or the OS requests reduced motion. Direct chapters and skip controls remain available.
 
@@ -41,7 +43,7 @@ python -m pip install -r scripts/requirements.txt
 .\scripts\start.ps1
 ```
 
-Open **https://localhost:8443**. The initial account is `admin@travelplan.local`; its randomly generated password is in `.secrets/admin-login.txt`. The development CA is not installed into your operating system automatically. See [local TLS](docs/OPERATIONS.md#local-tls) before accepting a certificate warning.
+Open **https://localhost:8443**. The initial account is `admin@travelplan.local`; its randomly generated password is in `.secrets/admin-login.txt`. The development CA is not installed into your operating system automatically. See [local TLS](OPERATIONS.md#local-tls) before accepting a certificate warning.
 
 `start.ps1` uses `compose.local.yml`, with one instance of each Java service. The standard `compose.yml` declares **two replicas of every Java microservice**:
 
@@ -85,9 +87,9 @@ flowchart LR
     Payments -->|HTTPS sandbox| Providers[Stripe / PayPal]
 ```
 
-The three services have separate database schemas and runtime roles. PostgreSQL is the source of truth; an idempotent, retryable outbox projects destination relationships into Neo4j. Cross-schema foreign keys intentionally provide atomic cascading behavior for this teaching project. The tradeoff and a future separation path are documented in [architecture](docs/ARCHITECTURE.md).
+The three services have separate database schemas and runtime roles. PostgreSQL is the source of truth; an idempotent, retryable outbox projects destination relationships into Neo4j. Cross-schema foreign keys intentionally provide atomic cascading behavior for this teaching project. The tradeoff and a future separation path are documented in [architecture](ARCHITECTURE.md).
 
-This Compose profile is a **single-host development deployment**, not a claim of production high availability. The repository now includes a three-replica Kubernetes application base, disruption budgets, autoscaling, default-deny networking, CloudNativePG and Vault HA inputs, External Secrets integration and a deliberately license-gated Neo4j Enterprise cluster template. See [Kubernetes readiness](infra/kubernetes/README.md) and [production HA certification](docs/PRODUCTION-HA.md). Actual HA still requires deployment across independent nodes and measured failure tests.
+This Compose profile is a **single-host development deployment**, not a claim of production high availability. The repository now includes a three-replica Kubernetes application base, disruption budgets, autoscaling, default-deny networking, CloudNativePG and Vault HA inputs, External Secrets integration and a deliberately license-gated Neo4j Enterprise cluster template. See [Kubernetes readiness](../infra/kubernetes/README.md) and [production HA certification](PRODUCTION-HA.md). Actual HA still requires deployment across independent nodes and measured failure tests.
 
 ## Verification
 
@@ -103,24 +105,24 @@ npm run test:e2e
 
 The end-to-end suite runs real authenticated CRUD against the local services. It checks navigation, itinerary persistence, stale updates, role restrictions, CSRF, cascading deletion, session revocation, phone overflow and WCAG accessibility rules. The current live run passed seven Chrome scenarios and five Firefox workspace scenarios; the two direct database-fixture cases ran through Chrome on Windows. Browser tests do not make real payments. They create and clean up their own records.
 
-Use `scripts/verify-infrastructure.py` for verified internal TLS, PostgreSQL transport enforcement, and graph projection checks. [VERIFICATION.md](docs/VERIFICATION.md) records the latest observed results and limitations.
+Use `scripts/verify-infrastructure.py` for verified internal TLS, PostgreSQL transport enforcement, and graph projection checks. [VERIFICATION.md](VERIFICATION.md) records the latest observed results and limitations.
 
-See the [feature test map](docs/TEST-MATRIX.md) and [reproducible infrastructure gates](docs/INFRASTRUCTURE-GATES.md). Run `python scripts/pre-submit.py` after installing the declared dependencies to collect local checks and explicitly unverified external gates.
+See the [feature test map](TEST-MATRIX.md) and [reproducible infrastructure gates](INFRASTRUCTURE-GATES.md). Run `python scripts/pre-submit.py` after installing the declared dependencies to collect local checks and explicitly unverified external gates.
 
 ## Delivery and operations
 
-- [Architecture and consistency](docs/ARCHITECTURE.md)
-- [Database schema and cascading rules](docs/SCHEMA.md)
-- [API reference](docs/API.md)
-- [Local operations, Vault, backups, TLS, and provider setup](docs/OPERATIONS.md)
-- [Jenkins, SonarQube, PR review, Ansible, and deployment](docs/DELIVERY.md)
-- [Security decisions and production work](docs/SECURITY.md)
-- [Package choices and asset credits](docs/DECISIONS.md)
-- [Kubernetes and multi-node HA readiness](infra/kubernetes/README.md)
-- [Production HA and Neo4j least-privilege plan](docs/PRODUCTION-HA.md)
+- [Architecture and consistency](ARCHITECTURE.md)
+- [Database schema and cascading rules](SCHEMA.md)
+- [API reference](API.md)
+- [Local operations, Vault, backups, TLS, and provider setup](OPERATIONS.md)
+- [Jenkins, SonarQube, PR review, Ansible, and deployment](DELIVERY.md)
+- [Security decisions and production work](SECURITY.md)
+- [Package choices and asset credits](DECISIONS.md)
+- [Kubernetes and multi-node HA readiness](../infra/kubernetes/README.md)
+- [Production HA and Neo4j least-privilege plan](PRODUCTION-HA.md)
 
 The optional tool stack is in `compose.tools.yml`. It includes Jenkins with authentication, SonarQube with PostgreSQL and a TLS proxy, and a TLS-protected Loki/Grafana monitoring stack. These profiles are deliberately not started by the laptop launcher.
 
 The complete Scroll Craft skill is installed in `.agents/skills/scroll-craft/`. Its local design brief and fingerprint are in `scrollcraft/`.
 
-See [Completion handoff](docs/COMPLETION-HANDOFF.md) for component test coverage, independent service deployment, executable owner sandbox verification and the remaining infrastructure prerequisites.
+See [Completion handoff](COMPLETION-HANDOFF.md) for component test coverage, independent service deployment, executable owner sandbox verification and the remaining infrastructure prerequisites.

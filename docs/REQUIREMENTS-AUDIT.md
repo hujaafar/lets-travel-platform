@@ -1,10 +1,12 @@
+> Historical project document. Retired GitHub PR/run links now point to the [history index](HISTORY.md). For current source, setup and checks, use the [portfolio README](../README.md) and [workflow guide](GITHUB-WORKFLOW.md).
+
 > Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
 
 # Assignment audit — 20 September 2026
 
 This audit checks the supplied Travel-Plan Part 1 rubric. **The project is not fully complete against the strict wording.** Source implementation, automated evidence and infrastructure/account prerequisites are different statuses.
 
-Baseline inspected: `62a947db2aca25d2e93e3887fa677c0bb08b0ab6` on `main`. [Its GitHub workflow](https://github.com/hujaafar/travel-plan/actions/runs/35206087570) completed successfully for both `travel-plan/jenkins` and `travel-plan/live-tests`. PR #1 was merged on 17 September; older documents calling it open are historical snapshots. [PR #2](https://github.com/hujaafar/travel-plan/pull/2) is now merged as well (commit `d8b780f889125b1701c53e089756a6095fb34566`, [checks passed on `main`](https://github.com/hujaafar/travel-plan/actions/runs/35429920193)), and synced to an identical tree on the course Gitea repository. The findings below describe what PR #2 fixed; treat its "Baseline defect fixed in PR #2" rows as now reflecting `main`, not an open PR.
+Baseline inspected: `62a947db2aca25d2e93e3887fa677c0bb08b0ab6` on `main`. [Its GitHub workflow](HISTORY.md#travel-plan) completed successfully for both `travel-plan/jenkins` and `travel-plan/live-tests`. PR #1 was merged on 17 September; older documents calling it open are historical snapshots. [PR #2](HISTORY.md#travel-plan) is now merged as well (commit `d8b780f889125b1701c53e089756a6095fb34566`, [checks passed on `main`](HISTORY.md#travel-plan)), and synced to an identical tree on the course Gitea repository. The findings below describe what PR #2 fixed; treat its "Baseline defect fixed in PR #2" rows as now reflecting `main`, not an open PR.
 
 ## Requirement-by-requirement findings
 

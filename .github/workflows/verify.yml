@@ -1,4 +1,4 @@
-name: Travel Plan review
+name: Build & verification
 
 on:
   pull_request:

@@ -1,8 +1,10 @@
+> Historical project document. Retired GitHub PR/run links now point to the [history index](HISTORY.md). For current source, setup and checks, use the [portfolio README](../README.md) and [workflow guide](GITHUB-WORKFLOW.md).
+
 > Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
 
 # Verification record — 17 September 2026
 
-> Current rubric review: see [REQUIREMENTS-AUDIT.md](REQUIREMENTS-AUDIT.md) and [PR #2](https://github.com/hujaafar/travel-plan/pull/2). Measurements below are the September 17 historical snapshot.
+> Current rubric review: see [REQUIREMENTS-AUDIT.md](REQUIREMENTS-AUDIT.md) and [PR #2](HISTORY.md#travel-plan). Measurements below are the September 17 historical snapshot.
 The authoritative current requirement/result matrix is [FINAL-AUDIT.md](FINAL-AUDIT.md). This replaces the earlier source-only and paused-runtime summaries.
 
 The application source verified by Jenkins build 6 is `5380cfe659520ccf6cb49b096a534b8ab2d25fe1`; final live checks also include Caddy revision `65b44133285224388669be1db0c8e5994cd823ae`. Documentation-only changes follow. Reports preserve individual timestamps, source revisions, failed attempts and successful reruns.

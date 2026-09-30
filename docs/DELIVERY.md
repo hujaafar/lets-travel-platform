@@ -1,3 +1,5 @@
+> Historical project document. Retired GitHub PR/run links now point to the [history index](HISTORY.md). For current source, setup and checks, use the [portfolio README](../README.md) and [workflow guide](GITHUB-WORKFLOW.md).
+
 > Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
 
 # CI, review and deployment
@@ -6,11 +8,11 @@
 
 ## Active development workflow
 
-The owner moved development to [GitHub](https://github.com/hujaafar/travel-plan), with Gitea retained as the final course delivery destination. See [GITHUB-WORKFLOW.md](GITHUB-WORKFLOW.md) for the executed-on-PR Jenkins/Sonar and live deployment jobs, enforced GitHub checks and synchronization policy. The course setup below is retained as the earlier delivery configuration; it must not be mistaken for the active GitHub CI integration.
+The owner moved development to [GitHub](HISTORY.md#travel-plan), with Gitea retained as the final course delivery destination. See [GITHUB-WORKFLOW.md](GITHUB-WORKFLOW.md) for the executed-on-PR Jenkins/Sonar and live deployment jobs, enforced GitHub checks and synchronization policy. The course setup below is retained as the earlier delivery configuration; it must not be mistaken for the active GitHub CI integration.
 
 ## Branch workflow
 
-[PR #1](https://github.com/hujaafar/travel-plan/pull/1) (the admin platform) and [PR #2](https://github.com/hujaafar/travel-plan/pull/2) (Admin-only access fix and load/redeployment gates) are both merged into `main` on GitHub, and synced to the same commit on the [course Gitea repository](https://learn.reboot01.com/git/hujaafar/travel-plan) via [PR #2 there](https://learn.reboot01.com/git/hujaafar/travel-plan/pulls/2). The default branch previously held the original foundation commit `19c9fdd22b9a68ceef1fe3930da4ccdf1be561a1`; that foundation had no independent review either, so a reviewer inspecting this project should read both the original files and the two PR diffs.
+[PR #1](HISTORY.md#travel-plan) (the admin platform) and [PR #2](HISTORY.md#travel-plan) (Admin-only access fix and load/redeployment gates) are both merged into `main` on GitHub, and synced to the same commit on the [course Gitea repository](https://learn.reboot01.com/git/hujaafar/travel-plan) via [PR #2 there](https://learn.reboot01.com/git/hujaafar/travel-plan/pulls/2). The default branch previously held the original foundation commit `19c9fdd22b9a68ceef1fe3930da4ccdf1be561a1`; that foundation had no independent review either, so a reviewer inspecting this project should read both the original files and the two PR diffs.
 
 There are no collaborators assigned, and GitHub will not let a PR author approve their own pull request. Because of that, the saved Git-host rule on both `main` branches now sets **required approvals to 0** as a standing solo-maintainer policy (not a one-off exception per PR) while keeping direct/force pushes to `main` disabled, required conversation resolution, and administrator enforcement on GitHub. GitHub still requires the exact status contexts `travel-plan/jenkins` and `travel-plan/live-tests` to pass before merge. Gitea has no runner that publishes those same contexts, so its required-status-check rule was disabled there rather than left permanently unsatisfiable; Gitea's actual quality gate for a given commit is whichever GitHub Actions run against that same SHA, linked from the PR description.
 

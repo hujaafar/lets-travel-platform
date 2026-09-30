@@ -1,3 +1,5 @@
+> Historical project document. Retired GitHub PR/run links now point to the [history index](HISTORY.md). For current source, setup and checks, use the [portfolio README](../README.md) and [workflow guide](GITHUB-WORKFLOW.md).
+
 > Phase-one reference inherited from Travel Plan. This is not evidence that phase two has passed. See [Phase-two status](PHASE-TWO.md).
 
 # Solo-maintainer delivery policy
@@ -20,11 +22,11 @@ This is a explicit, disclosed reduction in review rigor made necessary by workin
 
 ## Verified baseline and boundaries
 
-Application revision `27b89d223fc7c2ca5c65c42a337bddbf2f59dc90` passed [run 35185811401](https://github.com/hujaafar/travel-plan/actions/runs/35185811401): 78 Java, 63 dashboard and 35 provisioning tests; 14 Chromium/Firefox scenarios; Jenkins/Sonar candidate analysis; actual Ubuntu Ansible deployment; internal TLS; centralized logging; Java replica recovery.
+Application revision `27b89d223fc7c2ca5c65c42a337bddbf2f59dc90` passed [run 35185811401](HISTORY.md#travel-plan): 78 Java, 63 dashboard and 35 provisioning tests; 14 Chromium/Firefox scenarios; Jenkins/Sonar candidate analysis; actual Ubuntu Ansible deployment; internal TLS; centralized logging; Java replica recovery.
 
-[PR #2](https://github.com/hujaafar/travel-plan/pull/2), merged 19 September 2026 (GitHub commit `d8b780f889125b1701c53e089756a6095fb34566`, synced to Gitea as `a04f1a5b12e25003109ae29a7d6f6311c7d1f600` with an identical tree), fixed a real Admin-only access defect — Viewers could previously read all business data and Travel Managers could write travel records — and added bounded concurrent-load, per-replica distribution and Ansible-redeployment-preserves-data regression gates. Both `travel-plan/jenkins` and `travel-plan/live-tests` passed on that exact commit on GitHub; see [run 35429920193](https://github.com/hujaafar/travel-plan/actions/runs/35429920193).
+[PR #2](HISTORY.md#travel-plan), merged 19 September 2026 (GitHub commit `d8b780f889125b1701c53e089756a6095fb34566`, synced to Gitea as `a04f1a5b12e25003109ae29a7d6f6311c7d1f600` with an identical tree), fixed a real Admin-only access defect — Viewers could previously read all business data and Travel Managers could write travel records — and added bounded concurrent-load, per-replica distribution and Ansible-redeployment-preserves-data regression gates. Both `travel-plan/jenkins` and `travel-plan/live-tests` passed on that exact commit on GitHub; see [run 35429920193](HISTORY.md#travel-plan).
 
-This document records authorization and the procedure. The [GitHub PRs](https://github.com/hujaafar/travel-plan/pulls?q=is%3Apr), [workflow runs](https://github.com/hujaafar/travel-plan/actions), and [course PRs](https://learn.reboot01.com/git/hujaafar/travel-plan/pulls) are the authoritative records of which steps actually completed. Earlier audit/review documents are dated snapshots taken before later merges and retain their original evidence for the revision they describe.
+This document records authorization and the procedure. The [GitHub PRs](HISTORY.md#travel-plan), [workflow runs](HISTORY.md#travel-plan), and [course PRs](https://learn.reboot01.com/git/hujaafar/travel-plan/pulls) are the authoritative records of which steps actually completed. Earlier audit/review documents are dated snapshots taken before later merges and retain their original evidence for the revision they describe.
 
 ## Boundaries
 
@@ -36,7 +38,7 @@ No public production deployment, paid subscription, new provider account, paymen
 
 ## Verified baseline and boundaries
 
-Application revision `27b89d223fc7c2ca5c65c42a337bddbf2f59dc90` passed [run 35185811401](https://github.com/hujaafar/travel-plan/actions/runs/35185811401): 78 Java, 63 dashboard and 35 provisioning tests; 14 Chromium/Firefox scenarios; Jenkins/Sonar candidate analysis; actual Ubuntu Ansible deployment; internal TLS; centralized logging; Java replica recovery. Later commits need their own successful required checks.
+Application revision `27b89d223fc7c2ca5c65c42a337bddbf2f59dc90` passed [run 35185811401](HISTORY.md#travel-plan): 78 Java, 63 dashboard and 35 provisioning tests; 14 Chromium/Firefox scenarios; Jenkins/Sonar candidate analysis; actual Ubuntu Ansible deployment; internal TLS; centralized logging; Java replica recovery. Later commits need their own successful required checks.
 
 A bounded AI-assisted inspection also covered authentication, authorization, CSRF, transactional CRUD, database cascades, the Neo4j outbox, provider endpoints, ingress and CI permissions. It did not establish an additional release-blocking defect in that scope, and it is not independent human approval or a security certification.
 

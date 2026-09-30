@@ -1,6 +1,6 @@
 # Phase-two status
 
-This covers **Let’s Travel**, not the phase-one Travel Plan submission. Implementation and verification are tracked in [GitHub PR #1](https://github.com/hujaafar/lets-travel/pull/1). Inspect the checks for the submitted revision and follow the [demonstration guide](DEMONSTRATION.md).
+This covers the traveler and manager extension of **Let’s Travel**. Both project stages now live in the [portfolio repository](https://github.com/hujaafar/lets-travel-platform). Inspect its [current checks](https://github.com/hujaafar/lets-travel-platform/actions) and follow the [demonstration guide](DEMONSTRATION.md). See [migration notes](PORTFOLIO.md) for preserved history.
 
 | Requirement | Implementation |
 |---|---|
@@ -13,7 +13,7 @@ This covers **Let’s Travel**, not the phase-one Travel Plan submission. Implem
 | Stripe/PayPal | Hosted sandbox checkout, verification, cancellation and refund reconciliation |
 | Trust/community | Completed-trip feedback, private reports, manager profiles, confirmed traveler groups |
 | Personal statistics | Past trips, cancellations, reports and used payment methods |
-| Responsive UI | Traveler and manager pages, accessible dialogs, mobile layout, motion with reduced-motion support |
+| Responsive UI | Traveler and manager pages, accessible dialogs, mobile layout, always-on scroll and pointer motion; OS reduced-motion disabling is not supported in this version |
 | Tests/CI | Java/React units, real-service integration, Chrome/Firefox E2E, Jenkins/Sonar/GitHub workflow |
 | Security | TLS, CSRF, sessions, ownership, private networks, scoped Vault/search credentials |
 
