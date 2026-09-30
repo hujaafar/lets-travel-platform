@@ -1,0 +1,8 @@
+# Optional approved public CA bundle for Jenkins plugin downloads only.
+services:
+  jenkins:
+    build:
+      secrets: [build_ca]
+secrets:
+  build_ca:
+    file: ${BUILD_CA_FILE:?Set BUILD_CA_FILE to a trusted PEM certificate bundle}
