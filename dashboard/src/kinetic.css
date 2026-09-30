@@ -1,0 +1,740 @@
+/* Kinetic Atlas: finite native-scroll scenes. Motion follows native scroll at every system preference. */
+.kinetic-atlas {
+  --flight: 0;
+  --rail-progress: 0;
+  --rail-x: 0px;
+}
+.reading-meter {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 92px;
+  right: 0;
+  height: 3px;
+  pointer-events: none;
+}
+.reading-meter i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(var(--page-read, 0));
+  transform-origin: left;
+}
+.title-first {
+  display: inline-block;
+  transform: translateX(calc((var(--sc-p, 0.2) - 0.2) * -70px));
+}
+.dispatch-title-row h1 em {
+  display: inline-block;
+  transform: translateX(calc((var(--sc-p, 0.2) - 0.2) * 100px));
+}
+.launch-runway {
+  position: relative;
+  height: calc(100svh + 620px);
+}
+.launch-stage {
+  position: sticky;
+  top: 22px;
+  height: calc(100svh - 44px);
+  display: flex;
+  align-items: center;
+  perspective: 1600px;
+  isolation: isolate;
+}
+.launch-ground {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  display: grid;
+  place-items: center;
+}
+.launch-ground > span {
+  position: absolute;
+  bottom: 4%;
+  font: 400 clamp(70px, 13vw, 210px)/1 var(--display);
+  letter-spacing: -0.065em;
+  color: #c8c8b9;
+  white-space: nowrap;
+  transform: translateX(calc(var(--flight) * -130px));
+}
+.launch-ground > svg {
+  width: 95%;
+  height: 95%;
+  fill: none;
+  stroke: #cecfc1;
+  stroke-width: 0.6;
+  transform: rotate(calc(var(--flight) * -25deg));
+}
+.launch-skip {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 10px;
+  z-index: 4;
+  padding: 12px 0 12px 18px;
+  background: var(--canvas);
+}
+.launch-stage .dispatch-cover-wrap {
+  width: 100%;
+  transform-style: preserve-3d;
+  transform: perspective(1600px) rotateX(calc(var(--pointer-y, 0) * -2deg))
+    rotateY(calc(var(--pointer-x, 0) * 3deg));
+}
+.launch-stage .dispatch-cover {
+  height: calc(100svh - 150px);
+  min-height: 400px;
+  max-height: 850px;
+  clip-path: inset(
+    0 round calc(110px * (1 - var(--flight))) calc(110px * (1 - var(--flight)))
+      4px 4px
+  );
+  transform: perspective(1400px) rotateX(calc((1 - var(--flight)) * 6deg))
+    scale(calc(0.85 + var(--flight) * 0.15));
+  transform-origin: 50% 55%;
+  border-radius: 0;
+}
+.launch-stage .cover-photograph {
+  inset: -80px -20px;
+  transform: translate3d(0, calc((var(--sc-p, 0.35) - 0.35) * 90px), 0)
+    scale(calc(1.12 - var(--flight) * 0.12));
+}
+.launch-stage .cover-copy {
+  left: 5%;
+  bottom: 8%;
+  max-width: 55%;
+}
+.launch-stage .cover-copy h2 {
+  font-size: clamp(40px, 5.7vw, 85px);
+  max-width: 650px;
+  letter-spacing: -0.055em;
+}
+.launch-stage .cover-location {
+  left: 5%;
+  top: 7%;
+}
+.launch-stage .cover-seal {
+  right: 30%;
+  top: 9%;
+  transform: rotate(calc(-20deg + var(--flight) * 130deg));
+}
+.launch-stage .departure-ticket-plane {
+  right: 9%;
+  top: 20%;
+  transform: translate3d(
+      calc(var(--flight) * 52px + var(--pointer-x, 0) * 12px),
+      calc(var(--flight) * -85px + var(--pointer-y, 0) * -14px),
+      80px
+    )
+    rotate(calc(9deg - var(--flight) * 17deg));
+}
+.launch-stage .departure-ticket {
+  transform: rotate(0);
+  box-shadow: 12px 28px 42px #15251955;
+}
+.launch-stage .cover-caption {
+  margin-top: 0;
+  transform: translateY(calc((1 - var(--flight)) * -30px));
+  padding: 0 8%;
+}
+.flight-sketch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #fff7df;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+.flight-trail-ground {
+  stroke-dasharray: 3 12;
+  opacity: 0.35;
+}
+.flight-trail {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1px - var(--flight) * 1px);
+}
+.flight-plane {
+  stroke-width: 3;
+  opacity: var(--flight);
+}
+.destination-ticker {
+  overflow: hidden;
+  margin: 65px -46px 0;
+  padding: 8px 0 44px;
+}
+.destination-ticker > div {
+  display: flex;
+  width: max-content;
+  transform: translateX(calc(var(--ticker, 0.5) * -520px));
+}
+.destination-ticker span {
+  display: flex;
+  align-items: center;
+  gap: 45px;
+  padding-right: 45px;
+  font: 400 clamp(90px, 14vw, 210px)/1.1 var(--display);
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+.destination-ticker span:nth-child(even) {
+  font-style: italic;
+  -webkit-text-stroke: 1px #576457;
+  color: transparent;
+}
+.destination-ticker i {
+  font:
+    normal 0.65em/1 "DM Sans",
+    sans-serif;
+  color: var(--accent);
+  transform: rotate(calc(var(--ticker, 0.5) * 100deg));
+}
+.kinetic-atlas .journey-reader {
+  background: #202c29;
+  color: #f5f3e8;
+  margin: 0 -46px;
+  padding: 0 46px 40px;
+  position: relative;
+}
+.kinetic-atlas .reader-heading {
+  padding-top: 72px;
+  padding-bottom: 55px;
+}
+.kinetic-atlas .reader-heading h2 {
+  font-size: clamp(44px, 5.3vw, 82px);
+  letter-spacing: -0.045em;
+}
+.kinetic-atlas .reader-heading .text-link {
+  color: #f5f3e8;
+}
+.kinetic-atlas .section-rule-label {
+  color: #b8c7bc;
+}
+.kinetic-atlas .reader-layout {
+  gap: 7%;
+}
+.kinetic-atlas .route-bookmark {
+  top: 28px;
+  position: sticky;
+  transform: rotate(calc((var(--sc-p, 0.35) - 0.35) * -3deg));
+}
+.bookmark-folio {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+  z-index: 2;
+  font: 400 65px/1 var(--display);
+  color: #fff9e6;
+  text-shadow: 0 2px 8px #132b26;
+}
+.kinetic-atlas .bookmark-photo {
+  height: min(57svh, 630px);
+  border-radius: 120px 120px 0 0;
+}
+.kinetic-atlas .bookmark-photo img {
+  clip-path: inset(0 100% 0 0);
+  transform: scale(1.15) translateX(-3%);
+  transition:
+    clip-path 900ms cubic-bezier(0.2, 0.7, 0.1, 1),
+    transform 1200ms cubic-bezier(0.2, 0.7, 0.1, 1),
+    opacity 500ms;
+}
+.kinetic-atlas .bookmark-photo img.current {
+  clip-path: inset(0 0 0 0);
+  transform: scale(1.02) translateX(0);
+}
+.kinetic-atlas .bookmark-paper {
+  color: var(--ink);
+}
+.kinetic-atlas .route-reading-stop {
+  min-height: 85svh;
+}
+.kinetic-atlas .route-reading-stop + .route-reading-stop {
+  border-color: #647b6f;
+}
+.kinetic-atlas .route-reading-stop h3 {
+  font-size: clamp(65px, 7vw, 115px);
+  transform: translateY(calc((1 - var(--stop-entry, 1)) * 45px));
+}
+.kinetic-atlas .route-reading-stop h3 > span,
+.kinetic-atlas .stop-activity > svg {
+  color: #ed9473;
+}
+.kinetic-atlas .stop-topline,
+.kinetic-atlas .stop-activity span,
+.kinetic-atlas .stop-practical span,
+.kinetic-atlas .stop-practical svg {
+  color: #bacabd;
+}
+.kinetic-atlas .stop-open {
+  border-color: #647b6f;
+  color: #f5f3e8;
+}
+.kinetic-atlas .stop-open:hover {
+  color: #f7b191;
+}
+.kinetic-atlas .desk-collection {
+  border: 0;
+  padding-top: 40px;
+}
+.collection-runway {
+  position: relative;
+  height: calc(100svh - 44px + var(--rail-distance, 0px));
+}
+.collection-stage {
+  position: sticky;
+  top: 22px;
+  height: calc(100svh - 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.kinetic-atlas .collection-heading {
+  margin-bottom: 30px;
+  flex-shrink: 0;
+}
+.kinetic-atlas .collection-heading h2 {
+  font-size: clamp(45px, 5vw, 80px);
+  letter-spacing: -0.045em;
+}
+.collection-window {
+  overflow: hidden;
+  width: 100%;
+  padding: 12px 8px;
+  position: relative;
+}
+.collection-window:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.kinetic-atlas .editorial-journeys {
+  display: flex;
+  width: max-content;
+  gap: 40px;
+  position: relative;
+  transform: translate3d(var(--rail-x), 0, 0);
+  align-items: flex-start;
+}
+.kinetic-atlas .editorial-journey {
+  flex: 0 0 min(60vw, 780px);
+  width: min(60vw, 780px);
+  margin: 0;
+  perspective: 1400px;
+}
+.kinetic-atlas .journey-portrait {
+  aspect-ratio: auto;
+  height: clamp(240px, calc(100svh - 380px), 540px);
+  transform: rotateY(calc(var(--card-distance, 0) * -12deg));
+  transform-origin: center;
+}
+.kinetic-atlas .journey-portrait img {
+  width: calc(100% + 60px);
+  max-width: none;
+  margin-left: -30px;
+  transform: translateX(calc(var(--card-distance, 0) * -30px)) scale(1.035);
+}
+.kinetic-atlas .journey-portrait:hover img {
+  transform: translateX(calc(var(--card-distance, 0) * -30px)) scale(1.09);
+}
+.kinetic-atlas .editorial-journey h3 {
+  font-size: clamp(26px, 3vw, 43px);
+  line-height: 1.1;
+}
+.kinetic-atlas .editorial-journey-meta {
+  margin-top: 14px;
+}
+.kinetic-atlas .editorial-journey-foot {
+  padding-top: 14px;
+  margin-top: 15px;
+}
+.collection-navigation {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 22px 0 6px;
+}
+.collection-navigation > span {
+  font-size: 10px;
+  white-space: nowrap;
+}
+.collection-navigation > span i {
+  font-style: normal;
+  color: var(--soft);
+  margin: 0 6px;
+}
+.collection-progress {
+  height: 1px;
+  background: #c0c6ba;
+  flex: 1;
+  overflow: hidden;
+}
+.collection-progress i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(calc(0.08 + var(--rail-progress) * 0.92));
+  transform-origin: left;
+}
+.collection-arrows {
+  display: flex;
+  gap: 8px;
+}
+.collection-arrows button {
+  width: 43px;
+  height: 43px;
+  border: 1px solid #a6afa0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.collection-arrows button:hover {
+  background: #e1e4d7;
+}
+.collection-arrows button:disabled {
+  opacity: 0.35;
+}
+.kinetic-atlas .desk-close {
+  position: relative;
+  min-height: 76svh;
+  margin-top: 75px;
+  padding: 65px 0;
+  isolation: isolate;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.kinetic-atlas .desk-close > div:first-child {
+  padding-left: 0;
+}
+.kinetic-atlas .desk-close > .closing-copy {
+  padding-left: 0;
+  position: relative;
+  z-index: 1;
+  max-width: 76%;
+}
+.kinetic-atlas .desk-close .closing-star {
+  display: none;
+}
+.kinetic-atlas .desk-close h2 {
+  font-size: clamp(100px, 16vw, 250px);
+  letter-spacing: -0.065em;
+  line-height: 0.86;
+}
+.kinetic-atlas .desk-close h2 em {
+  display: block;
+  margin-left: 10%;
+}
+.kinetic-atlas .desk-close p {
+  margin-top: 35px;
+  font-size: 12px;
+}
+.kinetic-atlas .closing-actions {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 5px;
+}
+.kinetic-atlas .closing-actions .button {
+  min-height: 68px;
+  min-width: 215px;
+  justify-content: space-between;
+  font-size: 12px;
+  border-radius: 2px;
+}
+.kinetic-atlas .desk-close > .closing-orbit {
+  position: absolute;
+  right: 4%;
+  top: 5%;
+  width: clamp(240px, 28vw, 440px);
+  aspect-ratio: 1;
+  padding: 0;
+  z-index: 0;
+}
+.closing-orbit > div {
+  position: absolute;
+  inset: 14%;
+  overflow: hidden;
+  border-radius: 50%;
+  transform: translateY(calc((var(--sc-p, 0.5) - 0.5) * -90px))
+    rotate(calc((var(--sc-p, 0.5) - 0.5) * 30deg));
+}
+.closing-orbit img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.closing-orbit > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  transform: rotate(calc(var(--sc-p, 0.5) * 190deg));
+}
+@media (max-width: 980px) {
+  .reading-meter {
+    left: 0;
+  }
+  .title-first,
+  .dispatch-title-row h1 em {
+    transform: none;
+  }
+  .launch-runway {
+    height: auto;
+  }
+  .launch-stage {
+    position: relative;
+    top: auto;
+    height: auto;
+    display: block;
+    perspective: none;
+    padding-top: 38px;
+  }
+  .launch-ground {
+    display: none;
+  }
+  .launch-skip {
+    top: 0;
+    font-size: 9px;
+    padding: 0 0 15px;
+  }
+  .launch-stage .dispatch-cover-wrap {
+    transform: none;
+  }
+  .launch-stage .dispatch-cover {
+    height: 620px;
+    max-height: 80svh;
+    min-height: 470px;
+    transform: none;
+    clip-path: inset(0 round 80px 80px 0 0);
+  }
+  .launch-stage .cover-copy {
+    max-width: 85%;
+    left: 24px;
+    bottom: 25px;
+  }
+  .launch-stage .cover-copy h2 {
+    font-size: clamp(37px, 7vw, 65px);
+  }
+  .launch-stage .cover-location {
+    top: 28px;
+    left: 26px;
+  }
+  .launch-stage .cover-seal {
+    display: none;
+  }
+  .launch-stage .departure-ticket-plane {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    transform: none;
+  }
+  .launch-stage .departure-ticket {
+    box-shadow: none;
+  }
+  .launch-stage .cover-caption {
+    transform: none;
+    padding: 12px 0 0;
+  }
+  .flight-sketch {
+    display: none;
+  }
+  .destination-ticker {
+    margin: 45px -22px 0;
+    padding-bottom: 30px;
+  }
+  .destination-ticker > div {
+    transform: translateX(calc(var(--ticker, 0.5) * -220px));
+  }
+  .destination-ticker span {
+    font-size: 95px;
+    gap: 25px;
+    padding-right: 25px;
+  }
+  .kinetic-atlas .journey-reader {
+    margin: 0 -22px;
+    padding: 0 22px 25px;
+  }
+  .kinetic-atlas .reader-heading {
+    padding: 45px 0 30px;
+  }
+  .kinetic-atlas .reader-heading h2 {
+    font-size: 46px;
+  }
+  .kinetic-atlas .reader-layout {
+    display: block;
+  }
+  .kinetic-atlas .route-bookmark {
+    position: static;
+    transform: none;
+  }
+  .kinetic-atlas .bookmark-photo {
+    height: 470px;
+    max-height: 65svh;
+    border-radius: 100px 100px 0 0;
+  }
+  .kinetic-atlas .route-reading-stop {
+    min-height: 0;
+    padding: 38px 0;
+  }
+  .kinetic-atlas .route-reading-stop h3 {
+    font-size: 65px;
+  }
+  .collection-runway {
+    height: auto;
+  }
+  .collection-stage {
+    position: static;
+    height: auto;
+    display: block;
+  }
+  .collection-window {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;
+    padding-bottom: 15px;
+  }
+  .kinetic-atlas .collection-heading h2 {
+    font-size: 45px;
+  }
+  .kinetic-atlas .editorial-journeys {
+    gap: 18px;
+    transform: none;
+  }
+  .kinetic-atlas .editorial-journey {
+    width: 75vw;
+    flex-basis: 75vw;
+    scroll-snap-align: start;
+    perspective: none;
+  }
+  .kinetic-atlas .journey-portrait {
+    height: 400px;
+    max-height: 55svh;
+    transform: none;
+  }
+  .kinetic-atlas .journey-portrait img {
+    transform: scale(1.03);
+  }
+  .kinetic-atlas .editorial-journey h3 {
+    font-size: 30px;
+  }
+  .collection-navigation {
+    gap: 15px;
+    padding-top: 10px;
+  }
+  .kinetic-atlas .desk-close {
+    min-height: 650px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 30px;
+    margin-top: 45px;
+    padding: 42px 0;
+  }
+  .kinetic-atlas .desk-close h2 {
+    font-size: clamp(105px, 23vw, 180px);
+  }
+  .kinetic-atlas .desk-close > .closing-copy {
+    max-width: 100%;
+  }
+  .kinetic-atlas .desk-close > .closing-orbit {
+    width: 245px;
+    right: -20px;
+    top: 0;
+    opacity: 0.86;
+  }
+  .kinetic-atlas .closing-actions {
+    align-items: flex-start;
+  }
+}
+@media (max-width: 370px) {
+  .kinetic-atlas .journey-reader {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .destination-ticker {
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+  .kinetic-atlas .reader-heading h2 {
+    font-size: 39px;
+  }
+  .kinetic-atlas .desk-close h2 {
+    font-size: 105px;
+  }
+  .kinetic-atlas .desk-close > .closing-orbit {
+    width: 215px;
+    right: -15px;
+  }
+}
+/* Shared gutters follow the application shell at every breakpoint. */
+.kinetic-atlas {
+  --atlas-gutter: 46px;
+}
+.kinetic-atlas .journey-reader {
+  margin-left: calc(var(--atlas-gutter) * -1);
+  margin-right: calc(var(--atlas-gutter) * -1);
+  padding-left: var(--atlas-gutter);
+  padding-right: var(--atlas-gutter);
+}
+.kinetic-atlas .destination-ticker {
+  margin-left: calc(var(--atlas-gutter) * -1);
+  margin-right: calc(var(--atlas-gutter) * -1);
+}
+.kinetic-atlas .journey-portrait {
+  transition:
+    background-color 150ms,
+    color 150ms;
+}
+.kinetic-atlas .journey-portrait:focus-visible {
+  transform: none;
+}
+@media (max-width: 1150px) {
+  .kinetic-atlas {
+    --atlas-gutter: 30px;
+  }
+}
+@media (min-width: 761px) and (max-width: 980px) {
+  .reading-meter {
+    left: 92px;
+  }
+  .launch-stage .departure-ticket-plane {
+    position: absolute;
+    width: 210px;
+    right: 18px;
+    top: 120px;
+  }
+  .launch-stage .cover-copy {
+    max-width: 57%;
+  }
+}
+@media (max-width: 760px) {
+  .kinetic-atlas {
+    --atlas-gutter: 22px;
+  }
+}
+@media (max-width: 370px) {
+  .kinetic-atlas {
+    --atlas-gutter: 16px;
+  }
+}
+.kinetic-atlas .desk-collection:has(.collection-empty) .collection-runway,
+.kinetic-atlas .desk-collection:has(.collection-empty) .collection-stage {
+  height: auto;
+  position: static;
+}
+@media (min-width: 981px) and (max-width: 1150px) {
+  .launch-stage .departure-ticket-plane {
+    right: 14%;
+    width: 200px;
+  }
+}
