@@ -172,4 +172,4 @@ The local deployment is a single-host environment. [Kubernetes manifests](infra/
 | [Design decisions and credits](docs/DECISIONS.md) | Package choices, Scroll Craft adaptation, photography and font attribution |
 | [Portfolio migration](docs/PORTFOLIO.md) | Consolidated scope, preserved history and verification records |
 
-Built by [Husain Jaafar](https://github.com/hujaafar) as a travel-management portfolio project. Destination photographs are illustrative, not commercial trip listings. Third-party asset attribution and licenses are retained under `docs/licenses/` and in the design decisions.
+Built by [hujaafar](https://github.com/hujaafar) as a travel-management portfolio project. Destination photographs are illustrative, not commercial trip listings. Third-party asset attribution and licenses are retained under `docs/licenses/` and in the design decisions.
