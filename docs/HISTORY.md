@@ -8,7 +8,7 @@ See [portfolio migration](PORTFOLIO.md) and [current CI](https://github.com/huja
 
 | Original PR | Change | Merged (UTC) | Preserved commit |
 | --- | --- | --- | --- |
-| #1 | Add the role-aware Letâ€™s Travel platform | 2026-09-26T07:24:00Z | [`46f7d08`](https://github.com/hujaafar/lets-travel-platform/commit/46f7d082d33e26d348287f900ae20484d7fafeee) |
+| #1 | Add the role-aware Let’s Travel platform | 2026-09-26T07:24:00Z | [`46f7d08`](https://github.com/hujaafar/lets-travel-platform/commit/46f7d082d33e26d348287f900ae20484d7fafeee) |
 | #2 | Make scroll motion visible across the travel experience | 2026-09-26T07:55:23Z | [`c6dd3f7`](https://github.com/hujaafar/lets-travel-platform/commit/c6dd3f7069babca6631d2f6a0f60f1628bc32c88) |
 | #3 | Add an immersive alpine ascent and unified dark travel design | 2026-09-26T09:07:04Z | [`fe0e669`](https://github.com/hujaafar/lets-travel-platform/commit/fe0e6694f3aa473c5ffd00b41c8e61ccbfc5fecd) |
 | #4 | Make discovery a welcoming travel journal with coastal motion | 2026-09-26T09:47:44Z | [`23ce29c`](https://github.com/hujaafar/lets-travel-platform/commit/23ce29c51ea8c70766955764bb6a7cb622bff524) |
