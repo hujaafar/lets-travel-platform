@@ -1,0 +1,16 @@
+node_modules/
+dist/
+target/
+.env
+.secrets/
+work/
+test-results/
+playwright-report/
+coverage/
+.DS_Store
+__pycache__/
+*.pyc
+*.tsbuildinfo
+.venv/
+work-*.log
+dashboard/design-preview.html
