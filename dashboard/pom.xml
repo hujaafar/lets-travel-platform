@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.travelplan</groupId>
+    <artifactId>travel-plan</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>dashboard</artifactId>
+  <packaging>pom</packaging>
+  <!-- npm owns the frontend build; this module includes it in Sonar analysis. -->
+  <properties>
+    <sonar.sources>src</sonar.sources>
+    <sonar.tests>src</sonar.tests>
+    <sonar.exclusions>**/*.test.ts,**/*.test.tsx</sonar.exclusions>
+    <sonar.test.inclusions>**/*.test.ts,**/*.test.tsx</sonar.test.inclusions>
+    <sonar.javascript.lcov.reportPaths>coverage/lcov.info</sonar.javascript.lcov.reportPaths>
+  </properties>
+</project>
