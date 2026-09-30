@@ -1,0 +1,3 @@
+{{ with secret "secret/data/identity" }}
+{{ range $k, $v := .Data.data }}{{ $k }}={{ $v }}
+{{ end }}{{ end }}
