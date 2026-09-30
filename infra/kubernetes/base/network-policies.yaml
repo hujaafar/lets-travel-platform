@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: default-deny, namespace: lets-travel}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-dns, namespace: lets-travel}
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}
+      ports:
+        - {protocol: UDP, port: 53}
+        - {protocol: TCP, port: 53}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: dashboard-to-services, namespace: lets-travel}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app.kubernetes.io/name, operator: In, values: [identity, travel, payments]}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+      ports: [{protocol: TCP, port: 8443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: service-egress, namespace: lets-travel}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app.kubernetes.io/name, operator: In, values: [identity, travel, payments]}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: travel-data}}
+      ports:
+        - {protocol: TCP, port: 5432}
+    - to:
+        - podSelector: {matchLabels: {app.kubernetes.io/name: identity}}
+      ports: [{protocol: TCP, port: 8443}]
+    - to:
+        - ipBlock: {cidr: 0.0.0.0/0, except: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]}
+      ports: [{protocol: TCP, port: 443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: travel-neo4j-egress, namespace: lets-travel}
+spec:
+  # Neo4j Community has no native scoped-role support, so least privilege for
+  # it is enforced at the network layer: only travel ever queries the graph,
+  # so it is the only workload granted egress to Neo4j's Bolt port.
+  podSelector: {matchLabels: {app.kubernetes.io/name: travel}}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: travel-data}}
+      ports: [{protocol: TCP, port: 7687}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: dashboard-egress, namespace: lets-travel}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - podSelector:
+            matchExpressions:
+              - {key: app.kubernetes.io/name, operator: In, values: [identity, travel, payments]}
+      ports: [{protocol: TCP, port: 8443}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: allow-load-balancer, namespace: lets-travel}
+spec:
+  podSelector: {matchLabels: {app.kubernetes.io/name: dashboard}}
+  policyTypes: [Ingress]
+  ingress:
+    - ports: [{protocol: TCP, port: 8443}]
